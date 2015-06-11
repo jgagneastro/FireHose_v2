@@ -1,0 +1,308 @@
+XCOMBSPEC
+=========
+
+Xcombspec allows the user to combine individual extracted
+spectra into a single output spectrum. Xcombspec is typically
+used to combine order-separated individual spectra generated 
+by Spextool. 
+
+Xcombspec is a fully resizing widget.
+
+---------------------------------------------------------------------------
+Cursor commands:
+
+s - Selection of a wavelength range
+
+w - To plot the entire spectrum
+
+x - Enters x zoom mode
+    Press and release left mouse button at lower x value and
+    then at upper x value.
+
+y - Enters y zoom mode
+    Press and release left mouse button at lower y value and
+    then at upper y value.
+
+z - Enters zoom mode
+    Press and release the left mouse button in one corner of the
+    zoom box and then move the cursor to the other corner and
+    press and release the left mouse button.
+
+----------------------------------------------------------------------------
+I. Loading Spectra
+
+   1. Type "xcombspec" at the IDL prompt. This will bring up the Xcombspec panel.
+
+   2. Choose the input mode for the file names. 
+
+      a. If the user wishes to combine several spectral files located in 
+         various directories, s/he should create a separate text file listing
+         the full path names and filenames of these spectra, and then
+         choose the "File" input mode. The filename of the text file can 
+         then be input into the "File Name" field, or selected from the 
+         list presented when the "File Name" button is clicked.
+
+      b. If "Manual" mode (the default) is chosen, the user must enter 
+         the directory path where the data files reside in the "Path" field,
+         or click on the "Path" button and choose the path from the list 
+         shown. (If xcombspec is started up in the directory containing the
+	 data files, no Path name is required.) 
+
+         The user must then specify the manner in which the files are to be read 
+	 into xcombspec. If the files to be combined all have the same prefix, 
+         but different numbers (e.g., rspec10.fits, rspec11.fits, rspec12.fits, 
+         etc.), then the user should choose "Index" mode (the default). The input 
+         prefix must be typed into the "Input Prefix" field (e.g. rspec), and 
+         the file numbers entered into the "Files" field (e.g., 10-20). 
+
+         If the files have different prefixes, the user should choose the
+         "Filename" mode, and specify the file names in the "Files" field. 
+         Alternatively, the files can be selected by clicking on the "Files" 
+         button and highlighting the file names from the list that is displayed.
+  
+    3. If the input files contain spectra from multiple apertures that are
+      to be combined, the user should select the "Yes" button next to the
+      "Combine Apertures" label. Multiple aperture data in a single spectral
+      file would be generated if, for example, a faint point source were 
+      observed in A-B mode and the individual two-dimensional SpeX data image 
+      files were combined before the spectra were extracted, or if multiple 
+      sources were positioned on the SpeX slit and spectra of each object were 
+      extracted from the individual files. (In the latter case, however, the user 
+      would generally not want to combine the aperture spectra.) If the data files 
+      consist of observations of a single point source, observed in AB mode and 
+      extracted individually, the input files will not contain multiple apertures.
+
+   4. Click on the "Load Spectra" button to load the files. The spectra will
+      then be displayed in the display panel on the right hand side. If the data 
+      files contain multiple orders, all of the orders will be displayed. 
+      The user has the choice of displaying the fluxes, the errors, or the S/N 
+      ratios as a function of wavelength, by choosing from the "Type" pull down menu 
+      in the upper right hand corner of the panel. The different apertures (if 
+      available) can also be viewed by selecting the aperture from the "Aperture" 
+      pull down menu in the upper left hand corner.
+
+II. Modifying Spectra: Scaling, Correcting the Spectral Shapes, and Masking Bad Regions
+
+   5. Xcombspec will combine the individual spectra after optionally scaling
+      all of them to a selected level. The purpose of combining spectra is to 
+      increase the S/N of the source spectrum by averaging out the fluctuations 
+      due to noise. However, as a result of guiding errors, variable sky transmission, 
+      etc., rarely will it be the case that all of the individual spectra have 
+      the same flux level. Directly combining such 'raw' spectra, with their
+      different flux levels can defeat the purpose of the combining process, by 
+      increasing, rather than decreasing, the noise. Furthermore, one clearly 
+      doesn't want to discard most of the spectra. Scaling the spectra (and their 
+      associated errors!) to a common flux level will allow the user to make use 
+      of the entire data set. One can see the result of combining the spectra
+      without any scaling by selecting the "Combined" option from the "Plot:" 
+      pull down menu at the top of the plot window. One can also see the S/N 
+      spectrum for the combined spectrum by choosing "SNR" from the "Type" pull
+      down menu at the top of the plot window. 
+
+      If the user wishes to scale the spectra, s/he should select "Scale" from 
+      the pull down menu in "2. Modify Spectra", and choose an order from which the 
+      scaling should be determined. Xcombspec determines a *single* scale factor to 
+      be applied to all orders of a given spectrum. That is, the factor determined
+      for spectrum 2 in order 5 is also applied to the corresponding spectrum 2 in
+      order 3. (The previous version of Xcombspec determined separate scale factors 
+      for each order. We discuss the reasons for this change and its consequences
+      below.) Therefore, we suggest that the scale factors should generally be determined 
+      from the middle orders (e.g., 5 in SXD mode), unless the user has a particular 
+      reason for choosing another order. (For example, if no flux is detected in the
+      higher orders, 7 and 8, it might be better to use order 4 to determine
+      the scale factor.) We also recommend choosing an order with a high overall S/N
+      value. For example, for the SXD mode, orders 5 or 6 are generally the best 
+      to determine the scale factors. Once the order is chosen, the Xscalespec plot 
+      window will appear. 
+
+      a. The user should choose a wavelength range to be used to determine
+         the scaling factors. Again, it is usually best to select the range
+         with the highest count rate. Type "s" and click with the left most
+         mouse button to specify the short wavelength limit of the selected 
+         range.  Click again with the left most button to specify the long 
+         wavelength limit. Dashed blue vertical lines will show the designated 
+         wavelength range. The user can also zoom in on any region with the "z" 
+         command or use any of the cursor commands (see the cursor command list 
+         above).
+
+
+      b. Choose the type of scaling to be done from the pull down menu next to
+         the "Scale to:" label in the upper left of the plot window. The user
+         can choose no scaling ("None"), scale all spectra to the median of 
+         the plotted spectra ("Median") over the selected wavelength range, or 
+         scale to the level of a particular reference spectrum ("Spectrum") 
+         over the selected wavelength range. If "Spectrum" is selected, the 
+         number of the desired reference spectrum should be chosen from the 
+         pull down menu next to the "Spectrum" button. Xcombspec will then  
+         determine the scale factors to be applied to each spectrum, and will 
+         scale them appropriately. The user can inspect the result with the 
+         zoom commands, change the axis limits of the plot, re-select new 
+         reference spectra or scaling wavelength ranges, etc. If "None" is chosen
+         at any point in this process, the original unscaled spectra will be 
+         re-plotted.
+
+         We recommend using the Median for the scaling. 
+
+      c. Once the user is satisfied with the scaling, s/he should click on 
+         the "Accept" button. At this point, the plot window will disappear, and 
+         the scale factors determined above for each spectrum will be applied to all 
+         the spectra in all the orders. If the results are not acceptable, the 
+         scaling can be re-determined by choosing a new scaling order, a new 
+         reference spectrum, a different wavelength range, or the spectra can 
+         be re-loaded and the process repeated from the beginning.
+        
+   6. Either before or after the scaling step, the user may decide to exclude a 
+      particular spectrum from the combining procedure (probably because the 
+      spectrum simply has too low S/N - this will become especially apparent 
+      after the scaling is done). S/He should then choose the "Remove" option from
+      the pull down menu in the "2. Modify Spectra" box. Again, the user should
+      choose the order s/he wishes to examine. Upon selecting the order, the 
+      XSelectspec plot window will appear, which shows the various color-coded 
+      spectra, along with the color key on the left hand side, for the chosen order. 
+      The user can zoom in on any region with the "z" command or use any of the 
+      cursor commands (see the cursor command list above). A particular 
+      spectrum can be excluded from the combining process by unchecking its 
+      corresponding box number on the extreme left hand side. This will "turn off" 
+      that particular spectrum in the plot window. This feature is also handy for
+      identifying individual spectra if there are so many plotted that it is 
+      difficult to distinguish them: unclick the buttons next to the labels and 
+      note which spectra disappear. (Remember to turn on all spectra to be included 
+      in the combining process before leaving the plot window.) Once the user is 
+      satisfied with her/his selection, s/he can accept it by clicking on the 
+      "Accept" button. Xcombspec will then remove the selected spectra from all  
+      the orders and all further procedures in the combining process. Clicking
+      on the "Cancel" button, instead, will cancel all selections made in the 
+      current Xselectspec window, close the plot window, and return the user to 
+      the main window.
+
+      If the spectrum selection step was performed *after* the scaling, Xcombspec
+      will remind the user that the scaling may need to be re-computed with the 
+      new set of spectra. This is important if the user has chosen to scale to the
+      median, as clearly the median of the original set of spectra will be different
+      from that obtained with the smaller set.
+
+   7. Ideally, by scaling all spectra in every order to a common value (e.g. the
+      median), all the spectra should now lie perfectly on top of one another. However, 
+      we have found that this is not the case. After scaling, often the spectra in 
+      orders farthest from that used to determine the scale factor exhibit a large 
+      dispersion about the reference spectrum chosen in step 5 (e.g. the median). 
+      This implies that the spectral slope is varying from one spectrum to another over
+      the various orders. One can see this change in spectral slope even across a single
+      order if the spectra are examined closely. We believe this slope change is the
+      result of guiding errors, atmospheric dispersion, and time-variable, 
+      wavelength-dependent changes in seeing. Based on our tests, we do not believe it 
+      is due to any procedures carried out by Spextool during the data reduction. 
+
+      The user may choose to reduce the dispersion in the spectra about the reference
+      spectrum (and therefore increase the S/N of the final combined spectrum) by 
+      correcting for these slope variations. This can be done by clicking on the 
+      "Correct Spectral Shape" button. In each spectrum Xcombspec will then remove the 
+      low order variations, relative to the reference spectrum, from each spectrum, order
+      by order. After this has been done, all the spectra in a given order should lie on 
+      top of one another, which will then increase the S/N in the resulting combined 
+      spectrum.
+
+      The results of the Correction should be inspected carefully. While we have
+      set the parameters of the procedure such that it should work in most cases,
+      it can sometimes generate obviously spurious results. This is particularly
+      true if the input spectra have very low S/N.
+
+      Note that the "Correct Spectral Shape" step cannot be undone. If the user wishes
+      to undo this correction, s/he will have to re-load the spectra and start the 
+      combining procedure from the beginning.
+
+   8. For some observing modes, especially in the early days of SpeX, spectra obtained in 
+      one of the observing positions (i.e., in the B position of an AB pair) could 
+      land on a cluster of bad pixels . In order to exclude the affected wavelength regions 
+      in only a subset of spectra in any given order from the combining process, while
+      retaining the rest of the spectra (e.g., to exclude the range from, say 1.20 to 1.23 
+      microns in only the B beam spectra, but not the A beam spectra in the same order), 
+      the user can generate a "Mask" for that order. To do this, the user should 
+      choose the order for which a Mask is to be made by selecting it from the "Make Mask:" 
+      pull-down menu. Once the order is selected, the Xmkpixmask plot window will appear. 
+      Using the cursor command 's' (see the cursor command list above) the user can select 
+      a wavelength region to be excluded. (Type 's' followed by a click of the left-most 
+      mouse button to select the short wavelength limit, and then a second click to select 
+      the long wavelength limit.) The plotted spectra will exhibit a gap at the selected 
+      wavelength range. The user must then "turn on" those spectra s/he wishes to include 
+      in the combining procedure, by clicking on the corresponding boxes on the left hand 
+      side. (Note that for various reasons, to turn on a spectrum, the corresponding button 
+      must be clicked "off".) As each box is clicked the corresponding spectrum will re-appear 
+      in the gap. Once the user is satisfied with her/his wavelength and spectra selections, 
+      s/he should click on the Accept button. This will generate the mask for the selected 
+      order which will be used in the combining process. Clicking on the "Clear Mask" 
+      button will remove the gaps generated in the current Xmkpixmask plot window and
+      return the use to the main Xcombspec window.
+      
+III. Combining Spectra
+
+   9. The user should now choose the statistic to be used for the combining procedure. 
+      There are several statistics to choose from, and we briefly describe them here. For 
+      the robust statistics, a clipping threshold can be chosen. We recommend using the 
+      "Robust Weighted Mean" with a clipping threshold of 8 (sigma), which is the default.
+
+      Robust Weighted Mean: A sigma clipping algorithm is used to identify outliers. 
+      The value at each pixel is then the weighted average of the good pixels and the 
+      error is given by the error on the mean (rms deviation divided by root N). 
+ 
+      Robust Mean (RMS): A sigma clipping algorithm is used to identify outliers. The 
+      value at each pixel is the mean of the good pixels and the error is given by rms 
+      deviation of the pixels.
+
+      Robust Mean (Mean Error): A sigma clipping algorithm is used to identify outliers.  
+      The value at each pixel is the mean of the good pixels and the error is given by the 
+      error on the mean (rms deviation of the pixels divided by root N.)
+
+      Weighted Mean: A weighted mean and error (on the mean) are given at each pixel.
+
+      Mean (RMS):  The value at each pixel is given by the mean and the rms deviation 
+      of the pixels.
+
+      Mean (Mean error): The value at each pixel is the mean of the pixel values and the 
+      error is given by the error on the mean (rms deviation of the pixels divided by root N.)
+
+      Median (MAD):  The value at each wavelength is given by the median of the pixels. 
+      The error is given by the Median Absolute Deviation (MAD) which is given by 
+      MAD=1.4826* median( abs(x_i - med) ).  In the limit of a gaussian distribution, the 
+      MAD=sigma.
+
+      Median (Median Error): The value at each wavelength is given by the median of the pixels.  
+      The error is given by the MAD/ root (N).
+
+IV. Write the Output File
+
+  9. The user should now choose the output format (FITS is assumed unless the
+      user selects the "Text" box) and give the name of the output file in the "Output 
+      File" field and click on the "Write File" button.  The final combined spectrum 
+      will be displayed.
+
+V.  Note about Xcombspec
+
+     XCOMBSPEC (v3.3) now applies a single scale factor, determined from the
+     user-selected order, to all the orders. Older versions determined separate 
+     scale factors for each order. The switch to a single scale factor per spectrum
+     was made because (1) we found that the use of separate scale factors for each 
+     order resulted in mismatches in the flux levels in the order overlap regions 
+     in the final combined spectrum; and (2) scale factors could not be determined
+     reliably in those orders with low S/N. The use of a single scale factor determined
+     from a high S/N order obviates problem (2) while simultaneously yielding excellent
+     flux level agreement in the order overlap regions of the combined spectrum.
+
+     Nevertheless, the adoption of a single scale factor has revealed another 
+     challenge for the combining procedure and software. If there were no 
+     systematic/instrumental effects, the use of a single scale factor for a given 
+     spectrum across all orders should give the same result as applying separate scale
+     factors for each order. However, as explained above, we have found that, after 
+     adopting a single scale factor for each spectrum across all orders, the slopes 
+     of spectra recorded by SpeX for a single object within a block of 5 A-B pairs 
+     taken one after another can vary by a few percent. 
+     
+     Although it is not yet clear exactly what causes this variation, we believe it
+     results from a combination of physical effects (flexure, guiding errors, 
+     atmospheric dispersion, variable transmission, etc.) and it does not appear 
+     to be due to any procedures involved in the data reduction. We believe
+     that the new version of xcombspec incorporates the appropriate procedure for 
+     combining these spectra (yielding the median spectrum with the correct slope). 
+     Nevertheless, we urge users to perform the same steps and use the same 
+     statistics for their standard stars as for their objects.
+

@@ -1,0 +1,68 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# Script to export a version of a code and build a tar file for distribution.
+#
+# The version name should either be "trunk" or begin with the letter "v".
+# If it is "trunk", then simply check-out the current (untagged) version
+# of the code.  If it is an actual tagged version, then svn-export that
+# version.
+#
+# Example:
+#   % eviltarball idlspec2d v4_5_0
+# This creates the file "idlspec2d-v4_5_0.tar".  If you then wish to build
+# the code from this tar file in a directory named "idlspec2d":
+#   % tar xf idlspec2d-v4_5_0.tar
+#   % mv idlspec2d-v4_5_0 idlspec2d
+#   % cd spec2d
+#   % setenv $IDLSPEC2D_DIR $PWD
+#   % evilmake all
+# Note that the environment variable with the product name must be set,
+# and that the script "evilmake" must be in your path.  That script is
+# in the distribution of the "idlutils" product.
+#
+# D. Schlegel, Princeton, 24 August 2001
+# Updated for SDSS-III svn repository, B. A. Weaver, NYU, 2012-02-10
+#
+# $Id: eviltarball 130264 2012-02-10 19:06:45Z weaver $
+#
+#------------------------------------------------------------------------------
+#
+# Demand that both a product and version name are on the command line,
+# and that the version name either be "trunk" or begin with the character "v".
+#
+if [ $# != 2 ] ; then
+    echo "Need to specify product and version on command line, i.e."
+    echo "  \"eviltarball idlutils v5_4_26\""
+    exit 1
+fi
+prodname=$1
+prodvers=$2
+if [ "${prodvers}" != "trunk" -a "${prodvers:0:1}" != "v" ] ; then
+    echo 'Version name must either be "trunk" or begin with the character "v".'
+    exit 1
+fi
+#
+# Make a temporary directory for exporting the code, and make certain
+# that we can write to it.
+#
+tempdir=${PWD}
+tempsubdir="${prodname}-${prodvers}"
+#
+# Now export the code.
+#
+svnroot=http://www.sdss3.org/svn/repo
+cd ${tempdir}
+if ["${prodvers}" = "trunk" ] ; then
+    svn co ${svnroot}/${prodname}/trunk ${tempsubdir}
+else
+    svn export ${svnroot}/${prodname}/tags/${prodvers} ${tempsubdir}
+fi
+#
+# Build the tar file
+#
+tar --create --verbose --file ${tempsubdir}.tar ${tempsubdir}
+#
+# Finally, delete the temporary directory used to export the code.
+#
+/bin/rm -rf ${tempdir}/${tempsubdir}
+

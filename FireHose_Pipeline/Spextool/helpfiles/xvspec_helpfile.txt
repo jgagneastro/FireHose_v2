@@ -1,0 +1,35 @@
+---Xvspec----
+
+Xvspec is a resizable widget that displays spectra extracted using Spextool. 
+
+The widget can be started from the command line as:
+
+   IDL> xvspec
+   IDL> xvspec,spectra     
+
+where:
+
+   spectra - A string giving the filename of a SpeX spectral FITS image
+
+Buttons:
+
+   Read FITS       : Loads a Spextool FITS image
+   Header          : To view the FITS header
+   Flux            : Plots the flux spectrum
+   Error           : Plots the error spectrum
+   S/N             : Plots the signal-to-noise ratio
+
+   Aperture        : Plots each aperture
+
+   Color           : Changes the color of the plot
+   Gaussian Smooth : To smooth the spectra with a gaussian of FWHM given by 
+                     the button value
+   Modify Range    : To change the plot range
+   Fix Range       : Fix the y range.  Useful for comparing different apertures
+   Pixel Axis      : To plot the pixel values as well as the wavelengths
+
+Window Commands:
+
+   Type 'p' in the plot window to create a postscript file
+   Click on an order to zoom in on the order.  Type 'h' in the new plot window
+   for the cursor commands.

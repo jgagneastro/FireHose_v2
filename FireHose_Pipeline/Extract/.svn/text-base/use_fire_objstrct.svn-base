@@ -1,0 +1,6 @@
+;; Run this script within a function to use the FIRE structure objstrct__define.pro, and not the XIDL version
+
+fire_dir = GETENV( "FIRE_DIR" )
+CD, FIRE_DIR + '/Extract/', current=current
+resolve_routine, 'objstrct__define'
+CD, current

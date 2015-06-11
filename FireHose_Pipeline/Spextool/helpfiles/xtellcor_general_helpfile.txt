@@ -1,0 +1,297 @@
+Xtellcor_general
+================
+
+Xtellcor_general is an IDL-based telluric correction program written by
+Bill Vacca and Mike Cushing.  This program works only if the standard star 
+is an A0 V star since it uses a high-resolution model of Vega (A0 V) to 
+remove the intrinsic stellar features. Users can find a description of the 
+code, as well as pictures of the various widgets and plots used in the 
+procedure, in the paper by Vacca, Cushing, & Rayner (2003, PASP, 115, 389) 
+and we ask all users to reference this paper. The screen dumps of the 
+widgets are particularly useful for understanding the steps and procedures 
+involved.  The paper is available on the IRTF SpeX website.
+
+We recommend keeping this help window up throughout the telluric
+correction process if the user is unfamiliar with the process since
+it will be unaccessable during many of the pop-up widget processes.
+
+All of the plot windows in XTELLCOR_GENERAL are fully resizeable.
+
+---------------------------------------------------------------------------
+
+Cursor Commands:
+----------------
+
+The following cursor commands are general and are used in all of the 
+pop-up widgets.
+
+General Cursor commands:
+
+c - To clear a normalization, zoom, or line selection mode.
+
+i - To zoom IN in whatever zoom mode the cursor is currently in
+
+o - To zoom OUT in whatever zoom mode the cursor is currently in
+
+w - To plot the entire (WHOLE) spectrum
+    Can be used to clear a previous zoom-in.
+
+x - Enters x zoom mode.
+    Press (and release) left mouse button at lower x value and 
+    then press (and release) the left mouse button at the 
+    upper x value.
+
+y - Enters y zoom mode.
+    Press (and release) left mouse button at lower y value and 
+    then press (and release) left mouse button at the 
+    upper y value.
+
+z - Cursor enters zoom mode.
+    Press (and release) the left mouse button in one corner of the 
+    zoom box and then move the cursor to the other corner and press 
+    (and release) the left mouse button.
+
+The following cursor commands are used in only some specific windows,
+described below.
+
+Special Cursor Commands:
+
+e - Estimate the scale factors in the Xscalelines procedure.
+
+f - To fix a region of the telluric spectrum in the Xscalelines procedure.
+    Press and release the left mouse button on the left and 
+    right side of the bad region.  The bad region is replaced 
+    using the edge pixels to define a line.  Type "u" to undo 
+    the edit.
+
+m - modify the boundaries of a selected continuum region in the 
+    Xconkern procedure.
+
+n - Cursor enters normalization mode in Xconkern.
+    Select continuum regions to normalize the spectrum by
+    clicking the left mouse button on the left and right sides
+    of the region.
+
+s - Select a wavelength region in Xconkern and Xfindshift.
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+0.   Starting Up
+
+       1.  Type "xtellcor_general" at the IDL prompt. This will bring up 
+           the Xtellcor control panel, which is divided into 4 sections 
+           corresponding to the steps to be carried out in performing 
+	   the telluric correction on an input object spectrum.
+
+I. Loading the Data
+
+       2.  If the user is not working in the directory where the 
+           data is stored, enter the path either by clicking on 
+           the Path button or by typing the path into the field.
+	   If the user is in the directory where the data is located, 
+           then this field can be left blank.  
+
+       3.  Load the standard star spectrum by giving the filename in the
+	   "Std Spectrum:" field.  This file should be a text file with 
+           wavelength in the first column and "flux" in the second column. 
+           A third column with error values is optional. The default suffix 
+           of the file is assumed to be .dat.
+
+       4.  Give the B and V magnitude of the standard star.  If the 
+           magnitudes are unknown, entered the same magnitude 
+           (any number) for B and V.  In this case, the pseudo flux 
+           calibration will not be correct.  
+
+       5.  Load the object spectrum by giving the apropriate filename in
+           the "Obj. Spectra:" field. Again, this should be a text file
+	   with wavelength in the first column and flux in the second. A
+           third column with error values is optional.
+
+       6.  Choose the wavelength units for the input files from the pull-down 
+           menu.
+
+       7.  Give the FWHM of the instrument profile. The units must be the same
+           as that chosen for the wavelengths. The code currently assumes that 
+           the instrument profile is a Gaussian of the specified width.
+
+
+       8.  The observed absorption lines in the A star spectrum may be 
+           intrinsically broadened by rotation. If the rotation velocity 
+           is larger than the corresponding spectral resolution of the 
+           observations, this broadening will be noticeable and the IP 
+           convolution procedure (see below) may not be able to generate 
+           an accurate stellar template spectrum from the Vega model. 
+           The resulting telluric correction spectrum may contain spurious 
+           artifacts and produce unsatisfactory results.  To compensate 
+           for this, xtellcor_general allows the user to input a value 
+           of the rotation velocity (in km s-1) of the standard star, which 
+           is then used to broaden the Vega model. The rotation velocities 
+           of A stars can often be found in the literature.  The 
+           rotation-broadened Vega spectrum is then used with the IP to 
+           generate a template spectrum and a telluric correction spectrum 
+           (see below).
+
+       9.  Click the Load Spectra button. The spectra are loaded and the 
+           Gaussian instrument profile is then convolved with a stored model 
+           spectrum of Vega.
+
+II.   Constructing the Telluric Spectrum
+
+      10.  The user can now make adjustments to account for the fact that
+           the observed A0 V star may not have the same strengths of the 
+	   Hydrogen lines as in the Vega model spectrum. Click on the
+	   "Scale Lines" button in section 2. of the control panel. 
+           The Xscalelines panel will appear. 
+
+           In the bottom window of the panel is the estimate of the telluric
+           spectrum (in white) and a typical atmospheric absorption spectrum
+           (in yellow). The telluric spectrum, or the result of applying this 
+           telluric to the object spectrum, can be viewed by selecting one of 
+           the "Spectrum" buttons in the middle of the panel ("Telluric" or 
+           "Object" spectrum). The Hydrogen lines present in A0 V stars are 
+           labeled and marked in green. 
+           
+           Ideally, the telluric spectrum should look similar to the typical 
+           atmospheric absorption spectrum times the instrument throughput 
+           (which is a smoothly varying function). However, because the 
+           Equivalent Widths of the H lines in the observed star do not 
+           necessarily match those in the model spectrum of Vega, broad 
+           emission or absorption features may appear in the telluric 
+           spectrum at the wavelengths of the H lines.  Xscalelines provides 
+           a method of scaling the model equivalent widths in order to remove 
+           these features from the telluric spectrum. (See step 11).
+ 
+           In the upper panel is a plot of the initial scale factors
+	   used by the program to scale the H line Equivalent Widths in the
+	   model spectrum. Initially, all scales will be set to unity.
+
+      11.  The goal of this step is to remove the stellar H lines from the 
+           telluric spectrum and generate a telluric correction spectrum that 
+           contains only those features due to atmospheric absorption and the 
+           instrument response function. The typical telluric spectrum shown 
+           in yellow should give the user an idea of where the true 
+           atmospheric features are, what their approximate relative strengths
+           should be after removal of the stellar H lines, and how much the H 
+           lines in the (white) telluric spectrum should be scaled so that 
+           the white spectrum approximates the yellow one. To scale the 
+           strengths of the H lines, the user can zoom in on a region around 
+           any stellar H line in the bottom panel with the "z" command. If 
+           the line is fairly isolated and has continuum regions on either 
+           side of it, the user can type "e" (for "Estimate") and click the 
+           left-most mouse button twice, once on each side of the feature in 
+           the continuum regions. Xscalelines will automatically attempt to 
+           compute the best scale factor for that particular line based on a 
+           fit of a background+gaussian profile to the region in the telluric 
+           spectrum selected with the 'e' command. (We do not recommend use 
+           'e' on the H lines in very low resolution spectra, see below). The 
+           scale factors can also be adjusted by hand by clicking on the 
+           green points in the upper window with the left-most mouse button, 
+           holding the button down, and dragging the point up or down. 
+
+           If the user finds that s/he is unable to satisfactorily remove the 
+           the stellar H line from the telluric correction spectrum, s/he has  
+           the option of linearly interpolating over any remaining residual 
+           features.  This option can also be used if the star used as 
+           a telluric standard is found to have emission - rather than 
+           absorption - at some of the H transitions.  Type 'f' (for fix) 
+           and then click the left mouse button on the left and then 
+           right side of the residual feature.  The residual feature will 
+           be interpolated over using the flux values at the wavelengths 
+           chosen by the user.  To undo the interpolation, type 'u'.  
+ 
+         ***NOTE: The interpolation  feature should be used with caution since
+           any atmospheric features present will also be removed from the 
+           telluric correction spectrum. We recommend restricting the use of 
+           this option to only those regions and features where the typical 
+           atmospheric spectrum is seen to be very smooth.
+
+           Whenever the scale factors are adjusted (either by using the 'e' 
+           or 'f' commands or by dragging them by the user by hand), 
+           Xscalelines will fit a spline through all the scale factors at 
+           each H line and use the new array of scale factors to recompute a 
+           new telluric spectrum. The telluric-corrected object spectrum can 
+           be examined at any stage by selecting the "Object" button at the 
+           top of the lower window. This will show the user what the effects 
+           of changing the scale factors are on the object spectrum. However, 
+           we do not recommend that users base their scale factor adjustments 
+           on the results seen in the Object spectrum! The scale factors  
+           should be adjusted based on the generation of a telluric spectrum 
+           that approximates the typical atmospheric curve.
+
+           If the user is not happy with the adjusted scale factors, s/he can 
+           click on the "Reset Control Points" button, and all scale factors 
+           will be reset to unity. The "Cancel" button will close the 
+           Xscalelines window, and allow the user to re-start the procedure. 
+
+      12.  Examine the telluric spectrum and correct as many features as 
+           necessary using the method described above. Note that for some 
+           features it may not be possible to remove the residuals completely. 
+           Also, it may be necessary to shift the Vega model spectrum relative
+           to the observed spectrum in order to decrease the size of the 
+           residuals. The user can enter a relative velocity in the "Vshift" 
+           field at the top of the Xscalelines window. The Vega model used to 
+           construct the telluric correction spectrum is then shifted and a 
+           new telluric correction spectrum is generated.
+
+           When the user is satisfied with the telluric spectrum,
+           s/he should click on the "Accept" button at the bottom of the 
+           Xscalelines panel. 
+ 
+      13.  Select the units desired for the output telluric-corrected object
+	   spectrum from the "Units" pull-down menu. Then click on the 
+	   "Construct Telluric Spectrum" button. The program will then 
+            construct the telluric spectrum for each order.
+
+III.  Determining Residual Wavelength Shifts
+
+      14.  It is possible that there are slight wavelength shifts between 
+	   the A0 V star used to construct the telluric spectrum and the 
+	   the object to be corrected. These shifts need to be removed in 
+	   order to avoid introducing spurious noise and artifacts when
+	   dividing the object spectrum by the telluric spectrum. To estimate
+	   the wavelength shifts and correct them, click on the "Get Shift" 
+           button in section 3. "Determine Shift" of the Xtellcor control 
+           panel. 
+
+           The Xfindshift panel will apear. The object spectrum and the 
+           telluric spectrum are both plotted in the upper window. The 
+	   result of dividing one by the other is shown in the bottom window.
+
+      15.  Select a region containing a reasonably strong atmospheric features 
+           in both spectra (and preferably one not containing strong absorption
+           or emission features in the object spectrum). This is done by 
+           typing "s" (for "select") and click with the left-most mouse 
+           button on either side of the features. Then click on the 
+           "Auto Find" button in the upper left of the panel. Xfindshift will 
+           shift the telluric spectrum by fractions of a pixel and search for 
+           the best value, corresponding to a minimum in the RMS computed 
+           from the telluric corrected spectrum in the selected region. 
+           Alternatively, if the user desires a specific shift value (perhaps 
+           as the result of determining the shift from another order), s/he 
+           can enter the value directly in the "Shift" field and hitting 
+           return. SImilarly, wavelength shifts can be reset to zero by 
+           typing zero in the Shift field and hitting return. The user can 
+           determine the shift obtained from a different wavelength region by 
+           typing "s" and selecting a new wavelength region. The "Cancel" 
+           button will close the Xfindshift window, and allow the user to 
+           re-start the procedure. 
+
+           When the user is satisfied with the shift found by Xfindshift,
+           s/he should click on the "Accept" button at the bottom of the panel.
+ 
+IV. Generate the Output Files
+
+      16.  Give the name of the output file in the "Object File" field. A 
+           suffix of '.txt' will be added the filename.  The user can also 
+           choose to output the telluric correction spectrum as well as the 
+           modified Vega model spectrum (shifted to the radial velocity, 
+           scaled to the optical mag of the input standard star, convolved 
+           with the kernel, and multiplied by the equivalent width scale 
+           factor array). Click on the "Write File" button to generate the 
+           output files.  The output files consist of 3 columns of data, 
+           wavelength in microns, flux in the units chosen by the user, and 
+           error.  A widget called xzoomplot plot appears with the final 
+           telluric corrected spectrum.  To modify the plot parameters, type 
+           'm' in the plot window.  Type 'h' to learn about the cursor 
+           commands.

@@ -1,0 +1,445 @@
+Xtellcor
+========
+
+Xtellcor is an IDL-based telluric correction program written by
+Bill Vacca and Mike Cushing for use with SpeX.  This program works
+only if the standard star is an A0 V star since it uses a high-resolution 
+model of Vega (A0 V) to remove the intrinsic stellar features. Currently
+xtellcor works for ShortXD, LongXD, and LowRes15. Users can find a
+description of the code, as well as pictures of the various widgets and
+plots used in the procedure, in the paper by Vacca, Cushing, & Rayner (2003,
+PASP, 115, 389) and we would ask all users to reference this paper. The
+screen dumps of the widgets are particularly useful for understanding
+the steps and procedures involved.
+ 
+We recommend keeping this help window up throughout the telluric
+correction process if the user is unfamiliar with the process since
+it will be unaccessable during many of the pop-up widget processes.
+
+All of the plot windows in XTELLCOR are fully resizeable.
+
+----------------------------------------------------------------------
+
+Cursor Commands:
+----------------
+
+The following cursor commands are general and are used in all of the 
+pop-up widgets.
+
+General Cursor commands:
+
+c - To clear a normalization, zoom, or line selection mode.
+
+i - To zoom IN in whatever zoom mode the cursor is currently in
+
+o - To zoom OUT in whatever zoom mode the cursor is currently in
+
+w - To plot the entire (WHOLE) spectrum
+    Can be used to clear a previous zoom-in.
+
+x - Enters x zoom mode.
+    Press (and release) left mouse button at lower x value and 
+    then press (and release) the left mouse button at the 
+    upper x value.
+
+y - Enters y zoom mode.
+    Press (and release) left mouse button at lower y value and 
+    then press (and release) left mouse button at the 
+    upper y value.
+
+z - Cursor enters zoom mode.
+    Press (and release) the left mouse button in one corner of the 
+    zoom box and then move the cursor to the other corner and press 
+    (and release) the left mouse button.
+
+The following cursor commands are used in only some specific windows,
+described below.
+
+Special Cursor Commands:
+
+e - Estimate the scale factors in the Xscalelines procedure.
+
+f - To fix a region of the telluric spectrum in the Xscalelines procedure.
+    Press and release the left mouse button on the left and 
+    right side of the bad region.  The bad region is replaced 
+    using the edge pixels to define a line.  Type "u" to undo 
+    the edit.
+
+m - modify the boundaries of a selected continuum region in the 
+    Xconkern procedure.
+
+n - Cursor enters normalization mode in Xconkern.
+    Select continuum regions to normalize the spectrum by
+    clicking the left mouse button on the left and right sides
+    of the region.
+
+s - Select a wavelength region in Xconkern and Xfindshift.
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+0.  Starting Up
+
+       0.  Type "xtellcor" at the IDL prompt. This will bring up the 
+           Xtellcor control panel, which is divided into 5 sections 
+           corresponding to the steps to be carried out in performing 
+	   the telluric correction on an input object spectrum.
+
+I.  Loading the Data
+
+       1.  If the user is not working in the directory where the 
+           data is stored, enter the path either by clicking on 
+           the Path button and selecting the directory, or by typing 
+           the path into the field.
+	        IF THE USER IS IN THE DIRECTORY WHERE THE DATA IS LOCATED, 
+           THEN THIS FIELD CAN BE LEFT BLANK.  
+
+       2.  Load the standard star spectra by giving the filename in the
+	        "Std Spectra:" field, either by typing the filename or selecting
+           it from the pop-up menu after clicking on the "Std Spectra"
+           button.
+
+           NOTE: THE STANDARD STAR FILE MUST CONTAINN ONLY A SINGLE
+                 APERTURE.  IF THE STANDARD STAR WAS EXTRACTED FROM A
+                 SET OF COMBINED IMAGES, THEN THE TWO APERTURES MUST
+                 FIRST BE COMBINED USING XCOMBSPEC (SELECT COMBINE
+                 APERTURES IN BOX 1)
+
+       3.  Give the B and V magnitude of the standard star.  If the 
+           magnitudes are unknown, the user can enter the same magnitude 
+           (any number) for B and V.  In this case, the pseudo flux 
+           calibration will not be correct.  
+
+       4.  Load the object spectra by giving the apropriate filename in
+           the "Obj. Spectra:" field.
+
+       5.  Click the Load Spectra button. Note that the Airmass values 
+           for both spectra, and the airmass difference, will appear at
+           at the top of the Xtellcor panel.
+
+II.  Deriving the Kernel
+
+       6.  The next step involves generating a convolution kernel that
+	   will be applied to a (stored) model spectrum of Vega. The
+           kernel will be convolved with the Vega model spectrum (which will
+           then be scaled to the observed magnitudes of the A0V star) in 
+           order to simulate the observed spectrum of the A0V standard star 
+           at the resolution of the SpeX data. The division of the observed
+           stellar spectrum by the convolved and scaled Vega spectrum will 
+           then yield the telluric correction spectrum that will be applied 
+	   to the object spectrum.
+
+           There are two methods available to generate the kernel. The first
+	   involves creating the kernel based on the observed spectrum
+           the standard star. The second method generates a kernel from
+           the profile of the arc lines. The first method should be more 
+           accurate, yields better telluric corrections, and should be carried 
+           out whenever possible. However, in some cases, (e.g., performing 
+           telluric corrections for some LXD and all prism spectra), only the 
+           second method is possible. (The reasons will become clear shortly.) 
+           Both methods will be described in the following.
+           
+           If the user is reducing SXD or LXD data and wishes to generate 
+           the convolution kernel from the observed A0 V star, s/he should 
+	   select the "Deconvolution" button. 
+
+       "IP" Method: 
+       ------------
+ 
+       7.  If the user is building the convolution kernel from the shape of
+	   the arc lines, s/he should select the "IP" (for 
+           "Instrument Profile") button and simply click on the "Construct 
+           Kernel" button in section 2 of the Xtellcor control panel. Then 
+           continue with step 17. The IP method is recommended for reducing 
+           LowRes spectra and any LXD spectra for which the observed A0V 
+           spectrum contains no suitable (high S/N) H lines.
+
+       "Deconvolution" Method:
+       -----------------------
+
+       8.  If the user is building the convolution kernel from the spectra of 
+           the observed A0V standard star, s/he should select "Deconvolution". 
+           Then choose an order from the pull down menu in section 2 of the 
+	   Xtellcor panel. The selected order should contain a H absorption 
+           line in the spectrum of the A0V standard star that is *unaffected* 
+           by telluric absorption and has high S/N. The Paschen delta line at 
+           1.005 microns has been found to have minimal contamination by 
+           telluric features at the resolution of SpeX data. This is in order 
+           6 in the SXD mode. We have also obtained very satisfactory results 
+           using the Br gamma and Br alpha lines when reducing LXD spectra. 
+           These are in orders 9 and 5, respectively, of LXD data. The 
+           Deconvolution method is recommended for reducing SXD spectra, and 
+           LXD spectra whenever the A0V standard star spectrum has high S/N. 
+
+       9.  Click on the "Construct Kernel" button. The Xconkern panel will
+	   appear and the spectrum of the A0 V star in the chosen order will 
+           be plotted in the upper half. 
+
+      10.  The user now must normalize the stellar spectrum by selecting 
+           "continuum" regions from the data and fitting them with a 
+           polynomial. Select the "Spectrum" button for the choice of "Window"
+           at the top of the Xconkern panel. Typing "n" will put the user into
+           the "normalization mode". Spectral regions representing continuum 
+           that are to be fitted by the program can then be chosen by clicking
+           twice with the left-most mouse button, once for the short wavelength
+           limit of the region and once for the long wavelength limit. The 
+           region thus selected will be designated with dashed blue vertical 
+           lines. The boundaries of a region can be shifted in wavelength by 
+           typing "m" (for "modify") and dragging the blue line leftward or 
+           rightward by clicking on the left-most mouse button and keeping it 
+           held down while moving the mouse. The user can continue in this 
+           manner to select any number of normalization regions. If s/he 
+           wishes to erase all regions and start the selection process over 
+           again, s/he can do so by clicking on the "Clear" button at the top 
+           right of the window.
+
+           Successful kernels can be generated by normalizing either the 
+           entire order spectrum (as shown in the PASP article) or by 
+           expanding the region around the chosen H line (with the "z" cursor 
+           command - see the list of cursor commands above) and normalizing 
+           the continuum only around that line.
+
+      11.  Once all desired continuum fitting regions have been selected, 
+	   choose the degree of the polynomial fit using the pull down
+	   menu at the top of the Xconkern panel. (Degrees of 6-9 seems to 
+           work well to normalize the entire spectrum of an A0 V star in order
+	   6.) Then click on the "Fit Continuum" button. The polynomial
+	   fitted to the continuum regions will be overplotted on the spectrum.
+
+      12.  Repeat steps 10 and 11 until a satisfactory continuum fit is 
+           obtained.
+
+      13.  Once a good fit to the continuum is achieved, select the 
+	   "Normalized Spectrum" button at the top of the Xconkern panel. This
+	   will display the normalized spectrum of the standard star. 
+
+      14.  The user now must select a wavelength region containing an 
+	   absorption line that will be used to construct a kernel. This
+	   is done by typing "s" (for "select") and clicking with the 
+	   left-most mouse button on the short and long wavelengths 
+           bracketing the absorption line. For the Pa Delta line, low
+           and high wavelength limits of approximately 1.000 and 1.010 microns
+           have been found to work reasonably well. Then click on the 
+           "Construct Kernel" button in the middle of the panel
+
+      15.  The program then generates a convolution kernel using the
+	   method described in the paper by Vacca et al. (2002). It then
+	   convolves this kernel with the model spectrum of Vega and divides
+	   the observed spectrum of the standard A0 V star by this convolved
+	   Vega spectrum. The observed spectrum of the standard star, the 
+	   the original Vega spectrum (binned to the sampling of the A0 V
+	   star), the convolved Vega spectrum, and the result of the 
+	   division ("residuals") are displayed in the bottom window of the
+	   Xconkern panel. Experience has shown that it is fairly easy to
+	   obtain residuals with maximum deviations of less than about
+           1.5%, and RMS deviations less than about 0.7% about the Pa delta
+           line in good S/N standard star spectra.
+
+      16.  The user can continue with steps 10-15 until s/he is satisfied with 
+           the residuals of the convolution. The s/he should click on the 
+           "Accept" button. Xtellcor will then convolve the Vega model with 
+           the kernel and scale the model to the observed A0V magnitudes. The 
+           division of the observed A0V spectrum by this scaled and convolved 
+           Vega spectrum generates the "Telluric Correction Spectrum".
+
+III. Constructing the Telluric Spectrum
+
+      17.  The user can now make adjustments to account for the fact that
+           the observed A0 V star may not have the same strengths of the 
+	   Hydrogen lines as in the Vega model spectrum. Click on the
+	   "Scale Lines" button in section 3. of the Xtellcor control panel. 
+           The Xscalelines panel will appear. 
+
+           In the bottom window of the panel is the estimate of the telluric
+           spectrum (in white) and a typical atmospheric absorption spectrum,
+           multiplied by the SpeX throughput curve for the mode (in yellow). 
+           The SpeX throughput curve or the atmospheric spectrum can be viewed 
+           individually by deselecting the other with the buttons in the 
+           middle of the panel. The telluric spectrum, or the result of 
+           applying this telluric to the object spectrum, can be viewed by 
+           selecting one of the "Spectrum" buttons in the middle of the panel 
+           ("Telluric" or "Object" spectrum).  The Hydrogen lines present in 
+           A0 V stars are labeled and marked in green. 
+           
+           Ideally, the telluric spectrum should look similar to the typical 
+           atmospheric absorption spectrum times the instrument throughput 
+           (which is a smoothly varying function). However, because the 
+           Equivalent Widths of the H lines in the observed star do not 
+           necessarily match those in the model spectrum of Vega, broad 
+           emission or absorption features may appear in the telluric spectrum
+           at the wavelengths of the H lines.  Xscalelines provides a method 
+           of scaling the model equivalent widths in order to remove these 
+           features from the telluric spectrum. (See step 18).
+ 
+           In the upper panel is a plot of the initial scale factors
+	   used by the program to scale the H line Equivalent Widths in the
+	   model spectrum. If the user constructed the kernel with the 
+           Deconvolution method, all the scales will be set to the ratio of
+           the equivalent width in the observed spectrum to the equivalent
+           width in the model spectrum. If the user constructed the kernel
+	   with the IP method, all scales will be set to unity.
+
+      18.  The goal of this step is to remove the stellar H lines from the
+           telluric spectrum and generate a telluric correction spectrum that 
+           contains only those features due to atmospheric absorption. The 
+           typical telluric spectrum shown in yellow should give the user an 
+           idea of where the true atmospheric features are, what their 
+           approximate relative strengths should be after removal of the 
+           stellar H lines, and how much the H lines in the (white) telluric 
+           spectrum should be scaled so that the white spectrum approximates 
+           the yellow one. To scale the strengths of the H lines, the user can 
+           zoom in on a region around any stellar H line in the bottom panel 
+           with the "z" command. If the line is fairly isolated and has 
+           continuum regions on either side of it, the user can type "e" (for 
+           "Estimate) and click the left-most mouse button twice, once on each
+           side of the feature in the continuum regions. Xscalelines will 
+           automatically attempt to compute the best scale factor for that 
+           particular line based on a fit of a background+gaussian profile to 
+           the region in the telluric spectrum selected with the 'e' command. 
+           (We do not recommend use 'e' on the H lines in LowRes15 spectra, 
+           see below). The scale factors can also be adjusted by hand by 
+           clicking on the green points in the upper window with the left-most 
+           mouse button, holding the button down, and dragging the point up 
+           or down. 
+
+           If the user finds that s/he is unable to satisfactorily remove the 
+           the stellar H line from the telluric correction spectrum, s/he has  
+           the option of linearly interpolating over any remaining residual 
+           features.  This option can also be used if the star used as 
+           a telluric standard is found to have emission - rather than 
+           absorption - at some of the H transitions.  Type 'f' (for fix) 
+           and then click the left mouse button on the left and then 
+           right side of the residual feature.  The residual feature will 
+           be interpolated over using the flux values at the wavelengths 
+           chosen by the user.  To undo the interpolation, type 'u'.  
+ 
+         ***NOTE: The interpolation  feature should be used with caution 
+           since any atmospheric features present will also be removed from 
+           the telluric correction spectrum. We recommend restricting the use 
+           of this option to only those regions and features where the 
+           typical atmospheric spectrum is seen to be very smooth (e.g. in 
+           order 8 of the SXD mode).
+
+           Whenever the scale factors are adjusted (either by using the 'e' 
+           or 'f' commands or by dragging them by the user by hand), 
+           Xscalelines will fit a spline through all the scale factors at 
+           each H line and use the new array of scale factors to recompute a 
+           new telluric spectrum. The telluric-corrected object spectrum can 
+           be examined at any stage by selecting the "Object" button at the 
+           top of the lower window. This will show the user what the effects 
+           of changing the scale factors are on the object spectrum. However, 
+           we do not recommend that users base their scale factor adjustments 
+           on the results seen in the Object spectrum! The scale factors 
+           should be adjusted based on the generation of a telluric spectrum 
+           that approximates the typical atmospheric curve.
+
+           When the user is satisfied with the telluric spectrum in each order,
+           s/he should click on the "Accept" button at the bottom of the 
+           Xscalelines panel. 
+
+      19.  Examine the telluric spectrum in each order (by selecting the order 
+           from the "Order" pull-down menu in the middle of the Xscalelines 
+	   panel) and correct as many features as necessary using the method 
+           described above. Typically, orders 7 and 8 in the SXD mode require 
+           the most corrections, and often they require the interpolation 
+           option described above. 
+
+           Note that for some features it may not be possible to remove the 
+           residuals completely. This is particularly the case when using 
+           the IP mode. In some cases it may be necessary to shift the Vega 
+           model spectrum relative to the observed spectrum in order to 
+           decrease the size of the residuals. (A relative velocity offset 
+           is computed in the "Deconvolution" method, but not when the "IP" 
+           method is used.) The user can enter a relative velocity in the 
+           "Vshift" field at the top of the Xscalelines window. Due to a 
+           wavelength shift (or offset) in the original low-resolution Vega 
+           model file from Kurucz, velocity shifts of ~300 km s-1 are not 
+           uncommon for the LowRes15 mode.  The Vega model used to construct 
+           the telluric correction spectrum is then shifted and a new 
+           telluric correction spectrum is generated.  Note that the velocity 
+           shift is applied to all orders simultaneously. It is not possible 
+           to apply different velocity shifts to different orders. 
+
+       20. When all orders have been inspected and the line scaling has been 
+           finished, the user can select the units desired for the output 
+           telluric-corrected object spectrum from the "Units" pull-down menu. 
+           Then click on the "Construct Telluric Spectrum" button. The program 
+           will then construct the telluric spectrum for each order by dividing
+           the observed A0V standard star spectrum by the convolved and scaled 
+           Vega model whose H line EWs have been adjusted as described in steps
+           18-19.
+
+IV.  Determining Residual Wavelength Shifts
+
+      21.  We often find there are slight wavelength shifts between 
+	   the A0 V star used to construct the telluric spectrum and the 
+	   the object to be corrected. These shifts need to be removed in 
+	   order to avoid introducing spurious noise and artifacts when
+	   dividing the object spectrum by the telluric spectrum. To estimate
+	   the wavelength shifts and correct them, choose an Aperture and an
+           Order from the pull-down menus in section 4 ("Determine Shift") of 
+           the Xtellcor control panel. Then click on the "Get Shift" button.
+
+           The Xfindshift panel will appear. The object spectrum and the 
+           telluric spectrum are both plotted in the upper window. The 
+	   result of dividing one by the other is shown in the bottom window.
+
+      22.  Select a region containing a reasonably strong atmospheric features 
+           in both spectra (and preferably one not containing strong absorption
+           or emission features in the object spectrum). This is done by 
+           typing "s" (for "select") and click with the left-most mouse button
+           on either side of the features. Then click on the "Auto Find" 
+           button in the upper left of the panel. Xfindshift will shift the 
+           telluric spectrum by fractions of a pixel and search for the best 
+           value, corresponding to a minimum in the RMS computed from the 
+           telluric corrected spectrum in the selected region. Alternatively, 
+           if the user desires a specific shift value (perhaps as the result 
+           of determining the shift from another order), s/he can enter the 
+           value directly in the "Shift" field and hitting return. SImilarly, 
+           wavelength shifts can be reset to zero by typing zero in the Shift 
+           field and hitting return. The user can determine the shift obtained 
+           from a different wavelength region by typing "s" and selecting a 
+           new wavelength region. 
+
+           When the user is satisfied with the shift found by Xfindshift,
+           s/he should click on the "Accept" button at the bottom of the panel.
+
+           Because we have often found that different orders require different
+	   shift values, wavelength shifts can now (v3.3) be determined for 
+           each order independently.  Determining individual and independent 
+           shift values for each order should yield the best telluric 
+           correction results. After Accepting (or not accepting by hitting 
+           Cancel) the shift in a given order, s/he simply selects a new order
+           from the Xtellcor control panel, and repeats the procedure. 
+
+V. Generate the Output Files
+
+      23.  Choose the format of the output files by selecting from the FITS or
+	   Text option in section 5 of the Xtellcor panel. Give the name of
+	   the output file in the "Object File" field. For FITS file output, 
+           the .fits suffix will be automatically appended to the output name.
+           The user can also choose to output the telluric correction spectrum
+           as well as the modified Vega model spectrum (shifted to the radial 
+           velocity, scaled to the optical mag of the input standard star, 
+           convolved with the kernel, and multiplied by the equivalent width 
+           scale factor array). Click on the "Write File" button to generate 
+           the output files. 
+
+      24.  If one observation of an A0V standard is being used to perform 
+           telluric corrections for multiple objects, it is not necessary to 
+           re-generate the telluric correction curve each time. The user 
+           should generate the curve once, for the first object, using 
+           xtellcor, making sure that the telluric curve is saved and written 
+           out at the end of the process.  For the next object to be 
+           corrected, the user can start up the routine xtellcor_finish.
+           Xtellcor_finish will take the previously generated telluric curve 
+           and the target object as input. The user will be able to shift the 
+           two spectra, as in steps 21-22 of the full xtellcor procedure. 
+           After the best shift is found, xtellcor_finish will divide the two 
+           spectra and output the corrected object spectrum.
+
+
+
+
+
+

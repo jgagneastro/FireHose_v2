@@ -1,0 +1,1249 @@
+Spextool Manual 
+===============
+
+------------------------------------------------------------------------------
+Quick and Dirty Manual for Running SPEXTOOL - a package for reducing SpeX data
+------------------------------------------------------------------------------
+(W D Vacca and M C Cushing, 16 September 2006 - Spextool Version 3.4)
+
+
+The following is a brief description of how to run the Spextool package
+written by Mike Cushing and Bill Vacca for the reduction of SpeX data. A
+sample data set can also be downloaded so that users may practice using
+Spextool before their observing run.  Cushing et al. (2004, PASP, 116,
+362) describe the procedures incoporated into Spextool in detail.
+
+History:
+--------
+
+13 Oct 2000 - v1.0 - original release
+18 Oct 2000 - v1.1 - bug fixes, added sky base
+20 Oct 2000 - v1.2 - added xcombspec 
+                   - modified PS extraction
+                   - added description of xvspec
+24 Oct 2000 - v1.3 - bugs fixed in xcombspec
+18 Dec 2000 - v1.4 - Fixed bug where the spectra returned using the extended
+                     source extraction base WERE NOT in DN/s.  The values are
+                     now returned as DN/s.  
+                   - Added Combine base (see below).
+                   - Fixed a bug which made the spectra appear to have 
+                     some sort of fringing when small apertures, 
+                     < 1 arcsecond, were used.
+                   - Modified the way the arcs, flats and skys are stored.
+                     As a result, arcs, flats and skys made using earlier 
+                     versions of Spextool have to modified as follows:
+                     At an IDL prompt,
+                     IDL> i = readfits('filename',hdr)
+                     IDL> writefits, 'filename',rotate(i,7), hdr
+                     The flats, arcs, and skys can now be used with version
+                     1.4. 
+
+09 Mar 2001 - v1.5 - Improved wavelength calibration for the LXD1.9 and 
+                     LXD2.3.  See step 8.
+                   - Improved flat fielding (To be described later).
+                   - Prism mode can now be fully reduced.
+                   - Modified Path input.
+                   - XQTV can now perform image arithmetic (under file menu 
+                     button).                     
+                   - xcombspec has been modified to combine apertures 
+                     if requested.  This is useful when point source data
+                     is combined before being extracted.  In this case, 
+                     Spextool writes both apertures to the same file.  
+                   - Wavelength calibration now requires a user input which
+                     gives the pixel offset of an arc spectrum relative to 
+                     a standard arc spectrum.  
+
+17 Aug 2001 - v2.0 - Major revision:
+                   - Errors are now propagated through the extraction 
+                     process.  An error vector is now produced and appears
+                     as a third dimension in the FITS array or another column
+                     in the text array.
+                   - All output names (i.e. arcs, flats, etc) should NOT
+                     have the suffix .fits added now.  Spextool will add it 
+                     automatically.  When loading images in using full names,
+                     the entire name, including the .fits, should be entered. 
+                   - Xplotprofiles now shows the raw data and and has 
+                     cursor tracking. 
+                   - Xvspec can show the error spectra and compute 
+                     the signal-to-noise in each spectrum. 
+                   - Xvspec can now smooth the spectra (convolve with a 
+                     Gaussian of FWHM = npixels) and propagate the error.
+                   - To launch a zoom window (xzspec) in xvspec, click on 
+                     the order you want to examine. Xzspec is fully 
+                     resizable.  To learn the cursor commands, type 'h'
+                     in the plot window.
+                   - A new widget called xmkcals allows the user to 
+                     construct the flats and arcs for the entire night.
+                   - The xcombspec widget has been completely redesigned 
+                     to allow more user input.
+
+2001-10-09 - v2.1  - Fixed bugs in xcombspec
+                   - Added xsmoothspec widget to smooth spectra by 
+                     a Gaussian with FWHM equal to the slit width in pixels
+                   - Added a fits2text program to convert a SpeX FITS file
+                     to a text file
+                   - Improved bad pixel replacement
+                   - Added a data set to allow the user to practice using 
+                     Spextool
+                   
+2002-02-13 - v2.2  - Internal modifications to the structure of spextool.  
+                     Not backwards compatible but extraction is the same.
+                   - Fixed wavelength calibration for the LXD modes.
+                   - xzoomplot now has more zoom options. Type 'h'
+                     to see the cursor commands.
+                   - Xplotprofiles now has slider bars to allow better
+                     viewing of the super-profiles.
+
+2002-10-29 - v2.3  - Heavily modified xcombspec.
+                   - Updated xzoomplot for more control over the plot
+                   - Added linearity correction
+                   - Background fit degree can now be set to 0 (a constant)
+                   - Added comps_form.pro that works with IDL 5.5.
+
+2003-04-02 - v3.0  - Large number of additions and modifications:
+                   - Added weighted profile ("optimal") extraction - now 
+                     default method for PS mode
+                   - Replaced arc and flat bases with single cal base 
+                     (incorporates xmkcals)
+                   - Changed method of normalizing flat fields
+                   - Improved method of constructing "Super profiles"
+                   - Added "stored wavelength solutions"
+                   - Added cross-correlation method for determining wavelength 
+                     shifts
+                   - Replaced xqtv with ximgtool widget
+                   - Improved linearity correction
+
+2003-04-22 - v.3.1 - Minor bugs fixed
+                   - Error estimation for a single frame is now correct
+                   - Added aperture positions for the Extended Source 
+                     extraction
+
+2004 Jan 30 - v3.2 - Revision to wavelength calibration; separate wavelength
+                     solutions are no longer found for each aperture.
+                     Absolute calibration also improved. A new widget xfwc
+                     (fix wave cal) will determine a new wavelength solution
+                     from the cal files and apply it to previously extracted
+                     spectra.
+                   - Fixed minor bugs in xmergespec, xmergeorders, xtellcor
+                   - Added smoothing ability to xcleanspec, removed xsmoothspec
+                   - Added ability to interpolate over lines in xtellcor
+                   - Added new widget xlightloss to correct for slit losses 
+                     when not at the parallactic angle.
+                   - Added Saturation limit to image display.  Saturated pixels
+                     appear red.  See below.
+                   - Added linear interpolation option in xtellcor.
+                   - Added a "Sum" statistic to xcombspec.
+
+2005 Oct 04 - v3.3 - Minor adjustments to plotting in the widget.  Keeps 
+                     the windows from blinking when the cursor enters/exits.
+                   - Modified xcombspec to include new combination statistics,
+                     and new shape correction routine (see 
+                     xcombspec_helpfile.txt or click on the Help Button) and 
+                     new plotting controls so that the user can see the 
+                     results of the combination (flux,error,SN) without 
+                     writing the data to disk.
+                   - Xtellcor can now determine shifts for each order and 
+                     these shifts are stored in the FITS header.
+                   - The scale factors in xmergeorders are now stored in
+                     the FITS header.
+                   - The creation of flats and combining images together is 
+                     faster since we now use the DIMENSION keyword to the 
+                     MEDIAN function. 
+                   - Added SMALL keyword to shrink Spextool for laptop screens
+                   - The Spextool helpfile now is launched as a separate window
+                   - HISTORY sentences in the output FITS files are broken at 
+                     spaces between words instead of at a given length
+                   - The FITS header keywords in output spectra now have 
+                     comments 
+                   - Added 's' for xplotprofiles.  The user can select 
+                     aperture positions using xplotprofiles (see step 13)
+                   - Heavily updated ximgtool, please see ximgtool_helpfile.txt
+                     or click Help.
+                   - A low-resolution atmosphere is now used in xscalelines 
+                     (xtellcor) for LowRes15 data.
+                   - Added a new 'f' option in xtellcor to interpolate over 
+                     poor removal of the H lines (see xtellcor_helpfile.txt 
+                     or click Help in xtellcor).
+                   - >= IDL 5.6 is now required to run Spextool
+
+2005-11-08 v3.4    - Fixed image math base in ximgtool
+                   - Fixed an xmergexd error and added both the SXD and LXD 
+                     HISTORY fields to the final FITS file
+                   - Fixed bug when concatanating headers that do not have the 
+                     same sized HISTORY fields
+                   - Renamed xfit2text to xspex2text and fits2text to spex2text
+                   - Updated plotting character sizes to scale with the 
+                     plot window sizes
+                   - Added a rountine to test the seeing for optimal 
+                     extraction (See step 16).
+                   - Added an IDLWAVE catalog file
+                   - Added ability to specify aperture positions independently 
+                     in each order
+                   - Postscript plots (ShortXD_IDs.ps, LongXD_IDs.ps) 
+                     showing the identification of the
+                     lines used for wavelength calibration are included in 
+                     Spextool/data
+                   - Fixed bug in xtellcor_finish regarding the YUNITS 
+                     FITS keyword.
+                   - Spextool is now Windows compatible (thanks to 
+                     Dan Clemens, BU and Joshua Kim, UA)
+
+
+Version 3.4 is the final final version of Spextool, and no further 
+modifications (aside from bug fixes) will be made. (Yes, I know, we said it 
+before. But this time we REALLY mean it. I think.)
+
+
+Limitations of Spextool:
+------------------------
+
+1. Spextool will *NOT* run under versions of IDL earlier than 5.6 and
+	there are no plans to make it compatible with these versions.
+
+2. Spextool works only for the short-wavelength cross-dispersed (SXD),
+        the long wavelength cross-dispersed (LXD: LXD1.9, LXD2.1, and
+        LXD2.3) and LowRes15 modes. Currently there are no plans to
+        incorporate the ability to reduce the Single Order modes into
+        Spextool.
+
+
+References:
+-----------
+
+We ask that users of Spextool please reference the Cushing et al. (2004,
+PASP, 116, 352) paper in any publications. Users of the xtellcor program
+for performing telluric corrections should reference Vacca et al. (2003,
+PASP 115, 389). The basic reference for SpeX itself is Rayner et
+al. (2003, PASP, 115, 362). Since this is the only recognition we
+receive for the time and effort we have expended, we would appreciate it
+if people were generous with citations.  (We'll also happily accept
+laudatory e-mails and monetary donations.)
+
+
+Bugs/Comments/Suggestions:
+--------------------------
+
+Bugs in the code should be reported to Mike Cushing
+(mcushing@as.arizona.edu) or Bill Vacca
+(wvacca@mail.arc.nasa.gov). Comments and/or suggestions regarding this
+instruction page should be directed to Bill Vacca
+(wvacca@mail.arc.nasa.gov), Mike Cushing (mcushing@as.arizona.edu) or
+John Rayner (rayner@ifa.hawaii.edu).
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+I.  Setup
+
+    1. Spextool *REQUIRES* at least IDL v5.6 (or later) as well as the latest 
+       version of the IDL Astronomy User's Library. The latter can be 
+       downloaded from the following URL: 
+		http://idlastro.gsfc.nasa.gov/homepage.html 
+
+    2. Download the Spextool gzipped tar file, gunzip it, and unpack it with 
+       tar xvf Spextool.tar. This will create a directory called Spextool,
+       which is the package directory, and a number of sub-directories.
+
+       ***Please delete all previously installed versions of Spextool***
+
+       If the user wants to practice using Spextool, download the data 
+       SpeXdata.tar.gz as well. Gunzip it and unpack it with tar xvf 
+       SpeXdata.tar. This data should be placed in the raw directory 
+       (see step 5).
+
+    3. Modify your IDL path to include the Spextool package
+       directory. This can be done in a number of ways, including
+       adding the path to your .idl_startup file, or adding it to your
+       IDL_PATH environment variable.  For example, on a UNIX machine,
+       if the IDL path is defined in a .cshrc file, edit the .cshrc
+       file to include the line
+
+         setenv IDL_PATH +/packagedirectory:$IDL_PATH
+
+       where /packagedirectory is the path to the package directory 
+       (e.g., /scr0/irtf/Spextool).
+
+       If there is no IDL_PATH defined in the .cshrc file, then include the
+       line
+
+         setenv IDL_PATH +/packagedirectory
+
+       An incorrect path is one of the most common causes of problems 
+       encountered in attempting to run Spextool.
+
+
+       Popup menu lists can be made to respond to mouse scroll wheel
+       input by modifying a set of resources associated with the X11
+       windows environment.  Add the following to your '~/.Xdefaults'
+       file:
+
+*XmList.baseTranslations:       #augment <Btn5Down>:ListNextPage()\n\
+<Btn4Down>:ListPrevPage()\n
+
+*XmScrollBar.baseTranslations:  #augment <Btn4Down>: IncrementUpOrLeft(0) IncrementUpOrLeft(1)\n\
+ <Btn5Down>: IncrementDownOrRight(0) IncrementDownOrRight(1)\n   
+
+       and either restart your X enviroment or incorporate the changes by
+       typing 
+
+       xrdb -merge $HOME/.Xdefaults
+
+       in a terminal.  Carriage returns should only be placed after the
+       "\n\" characters.  You can now use the scroll wheel on your mouse
+       to move within popup text windows.  Moving the wheel in any text
+       window (e.g., help windows) or file selection window will now
+       perform "page up/page down".  Moving the wheel while over a text
+       scroll bar will move one line at a time.  Thanks to J.D. Smith
+       (University of Arizona) for this tip!
+  
+
+    4. Start IDL and bring up Spextool by typing: 
+ 
+       xspextool
+
+       This will bring up the main Spextool window, called the Main
+       Base.  In general, a "Base" is a panel or a set of panels
+       containing fields and buttons that the user fills in or selects
+       to control procedures carried out the reduction programs.
+
+    ***NOTE - Spextool assumes that flats and arcs obtained with the
+       SpeX cal macros will have the file prefixes of "flat" and
+       "arc", respectively.  If your calibration files have prefixes
+       different from this convention, or if your data were taken
+       before Nov. 2000, then you will not be able to process these
+       files with the Cal Base (see below). In such cases, you should
+       restart Spextool in IDL with the keyword FAB (which stands for
+       Flat and Arc Base):
+
+       xspextool, /FAB 
+
+       This keyword starts up a version of Spextool that retains the separate 
+       Flat and Arc Bases. 
+
+       Please make certain that you are running the correct version of
+       Spextool by looking at the title bar of the widget. The latest
+       version of Spextool is v3.4.
+
+       If the Spextool widget is too large for the user's screen, the
+       user can restart Spextool by typing xspextool,/SMALL.  This
+       will launch a version of the Spextool widget that uses smaller
+       fonts and shrinks the message window at the top of the widget.
+
+    5. Click on the Paths button in the middle of the Main Base. This
+       will bring up the Paths Panel. Spextool will automatically load
+       the paths last entered by the user. If the loaded paths are
+       correct, the user can proceed to step 6. If this is the first
+       time that Spextool is being run, or if the directories are
+       different from the last time Spextool was used, the user will
+       have to change the paths.
+
+       Spextool assumes (but does not require) that the raw data,
+       processed data needed for calibrations (e.g., flats and arcs),
+       and completely reduced data will be kept in separate
+       directories.  While this need not be the case, it makes the
+       reductions easier to keep track of (for humans). If you wish to
+       adopt this structure, create 3 subdirectories and put all of
+       your raw data in one of them. Typically these directories will
+       be called raw (for raw data), cal (for processed calibration
+       files) and proc (for processed data files). Type or (click) the
+       paths for these three subdirectories in the fields listed in
+       the Paths panel. Spextool will remember these directories, so
+       that next time you start Spextool these fields will be loaded
+       automatically. Finally, click the Update Paths button to load
+       the paths into memory.
+
+    6. In the File Read panel, above the Paths panel, choose the type
+       of naming convention used for your data. For example, if all
+       your data files are called spec followed by sequential numbers
+       for each file, choose Index and type in the prefix (here, spec)
+       into the Input Prefix field.  If you have different prefixes
+       for different files, you will have to change this field each
+       time the prefix changes. If your files all have different
+       names, you will have to choose the Filename mode. In this case,
+       only a single file can be processed in this mode and the user
+       must enter the full name of the input file and the output file.
+
+    7. At any point in the reduction process, the help file (this
+       page) can be brought up by clicking on the Help button in the
+       middle of the Spextool Main Base. This will launch a separate
+       Help file window.
+
+II.  Flats, Arcs, and Skys
+
+    ***NOTE: Because of flexure and the variable nature of atmospheric
+             absorption, it is recommended that each set of images of
+             a given object be reduced with its own set of flats,
+             arcs, and telluric standards.
+
+    8. Make calibration (flats and arcs) files.   
+
+       If you have started up Spextool with the FAB keyword and
+       therefore have separate Flat and Arc Bases, proceed with the
+       construction of flats and arcs by skipping to step
+       8b. Otherwise continue with step 8a.
+
+     8a. Click on the Cals button in the middle of the Main Base. This
+       will bring up the Cal Base. At the bottom right is a table
+       that can be filled with the sets of calibration files obtained
+       at the telescope using the pre-defined SpeX calibration
+       macros. Fill in the table by clicking on a line and then
+       entering the file numbers corresponding to a full calibration
+       set. Click on the next line and enter the file numbers for the
+       next cal set.  e.g., 10-18 , 28-36 etc.
+
+       Note that in the example above, files 10-15 might be flat
+       frames and 16-18 might be arcs. These do not have to be
+       separated in the table.  Fill the left-hand column of the table
+       with the cal sets from the entire night, one set per line. Note 
+       that SpeX will report an error if it finds two or more files with 
+       the same prefixes and numbers in the raw data directory (even if 
+       they have different "a" and "b" suffixes). 
+
+       If the observing mode was LXD, the user must also give file
+       names or numbers for sky frames, corresponding to each cal set, in 
+       the right-hand column of the table. Spextool requires these sky
+       frames, in addition to the arcs, as it uses the night sky lines
+       in the lower orders of the LXD modes for LXD wavelength
+       calibration since these orders have either very weak or no
+       arc (argon) lines. Choose Index for the File Read Mode in the 
+       upper left of the Cals base and give the prefix for the raw data 
+       files (e.g., spc). Then, if your targets are extended sources, 
+       give the file number of a sky image on each line. If your targets 
+       are point sources, enter the file numbers of an A and B pair in the 
+       field (e.g.,512-513 for the pair spc0512.a.fits,spec0513.b.fits). 
+       This AB pair should be chosen to be near in time and sky position 
+       (airmass) to the arc images. Spextool with then create a pure sky 
+       frame by computing
+
+       sky = (A+B) - abs(A-B).
+
+       If file numbers are not entered in the right-hand column, but
+       are needed by Spextool, the calibration routine will display an
+       error message and exit.
+      
+       Choose a statistic to use for combining the individual flats. A
+       typical choice might be median. (The arc frames are simply
+       averaged, as usually there are only 2 or 3 taken in any
+       calibration set.)
+
+       Click on the Construct Calibration Frames button at the bottom
+       of the Cals Base. Spextool will then produce mean arcs and
+       normalized flats from each set, e.g., flat10-15, arc16-18. It
+       will also generate a one- dimensional arc spectrum, extracted
+       at the middle of the slit, with the prefix 'wavecal' and the
+       file number associated with the arcs (e.g., wavecal16-18 in the
+       previous example). The wavecal spectrum can be viewed using
+       xvspec (see below).
+
+       To generate the wavelength solutions, Spextool automatically
+       cross-correlates the observed wavecal spectrum (extracted from
+       the arc file at the location of the center of the slit) with a
+       stored arc spectrum (for the appropriate observing mode) whose
+       wavelength solution has been previously determined. The
+       cross-correlation yields an estimate of the pixel shift
+       (offset) between the observed wavecal spectrum and the stored
+       one. The resulting value is displayed in the message window at 
+       the top of the Spextool main base. Spextool then uses this shift 
+       to search for emission lines with known wavelengths in the 
+       observed/extracted arc spectrum. Spextool then determines the 
+       wavelength calibration solution. The solution is then applied to 
+       the object spectra in a later step (after extraction of the object 
+       spectra). Note that Spextool does not "linearize" the wavelength 
+       solution.
+
+       It is possible - although usually not necessary - to examine
+       the result of the cross-correlation by turning on the Plot
+       X-Correlate button in the Wave Cal Parameters panel in the Other 
+       Base before the extraction is performed. If this button is turned 
+       on, Spextool will display the result of the cross-correlation, and 
+       a Gaussian fit (in red) to the largest peak in the cross-correlation 
+       spectrum, from which it will determine the pixel shift. It will 
+       then ask the user if the solution is acceptable. If it is not an
+       acceptable fit, or if the Auto X-Correlate button is turned off
+       in the Other Base, the xgetoffset widget will appear and will
+       display the stored arc spectrum and the observed/extracted arc
+       spectrum. The user must then identify the same line in each spectrum
+       by clicking on the lines with the left-most mouse button.  The
+       region around the selected line in both arc spectra, and a
+       Gaussian fit to the two lines, will be displayed in the window
+       next to each spectrum.  Spextool will determine the pixel shift
+       between the two spectra based on the center position of the two
+       Gaussian fits.  When the user is satisfied, s/he clicks the Accept
+       button and Spextool will then determine the wavelength
+       calibration solution, which will be applied later to the
+       extracted object spectra.
+
+       The wavelength solution determined by Spextool can also be
+       examined by selecting the Plot Residuals button in the Wave Cal
+       Parameters panel on the far right hand side of the Other
+       Base. When this button is selected, Spextool will display a
+       plot of the residuals (in Angstroms) of the fit to the
+       wavelength solution as a function of SpeX order (at the top)
+       and as a function of column across the array (at the bottom).
+       Click on the "Continue" button and Spextool will proceed with
+       the remaining steps in the extraction process.
+ 
+       The user can also decide to simply accept a "Stored" wavelength
+       solution, that has been previously determined and stored on
+       disk, rather than have Spextool attempt to determine the
+       wavelength solution from the observed arc frames. When using
+       wide slits (1.6 and 3.0 arcseconds), this is the required
+       method of carrying out wavelength calibration.  In these cases
+       the user should select the Use Disk Solution button at the
+       bottom of the Wave Cal Parameters panel (far right hand side)
+       in the Other Base. Spextool will automatically determine the
+       offset between stored arc and the extracted one. This offset is
+       then applied to the pre-determined wavelength solution stored
+       on disk. Again, if the Auto X-Correlate button is turned off in
+       the Other Base, the xgetoffset widget will appear and the user
+       will be required to identify the same line in both the observed
+       and the stored arc spectra, as described above.  Spextool will
+       use the shift determined from the identified lines as an offset
+       which will be applied to the pre-determined wavelength solution
+       stored on disk.
+
+       (Alternatively, if the observer is using wide slits for her/his
+       objects, s/he could choose to adopt the wavelength calibration 
+       derived from arc spectra obtained with the 0.3" slit. This would 
+       require that the observer switch to the narrow slit for the arc
+       frames obtained along with the wide slit object frames. A separate
+       cal macro would be needed for this procedure.)
+
+       The cal generation process takes some time and incorporates a
+       number of steps, including inspection of the files to determine
+       the observing mode (SXD or LXD), scaling and combining the
+       images, finding the edges of the orders, fitting a 2-D surface
+       to each order of the flats, replacing bad pixels in the flats,
+       and normalizing the flat by the 2-D surface.  Spextool will not
+       allow the user to do anything while it processes the flat, but
+       it will show you where it has found the individual orders in
+       the images, and it will display the final arc and normalized
+       flat when it is finished.
+
+       NOTE - The scattered light is not removed in the process of
+       constructing the flats. However, the scattered light levels in
+       flat frames produced by the pre-defined SpeX cal macros are
+       extremely small compared to the direct illumination levels in
+       the orders. This has been verified by examining the counts
+       recorded between the orders. In addition, the scattered light
+       is included in the 2-D surface fitting for normalizing the
+       flats.
+
+       NOTE - Sometimes the order location routine will fail and the
+       polynomial fits (green lines) will not follow the edges of an
+       order(s).  The most common reason (although not the only one)
+       for this is that the `guess positions' (red stars that are
+       plotted in ximgtool during the order location process) are not
+       sufficiently close to the center of the orders (probably
+       because the grating was not set at the nominal position assumed
+       by the software). Since the grating positions for the XD modes
+       have changed slightly during the lifetime of SpeX, it is not
+       possible to have a single set of guess positions that covers
+       all grating positions. Therefore it may be necessary for the
+       user to adjust these guess positions.  The text files with the
+       guess positions are located in DIR/Spextool/data/ where DIR is
+       the directory where Spextool was installed.  Each mode
+       (ShortXD, LongXD, LowRes15) has a corresponding text file
+       called mode.dat (e.g. ShortXD.dat). For example, at the bottom
+       of the ShortXD.dat file you will find,
+
+       GUESSPOS_01= 454.0  170.0
+       GUESSPOS_02= 507.0  331.0
+       GUESSPOS_03= 551.0  457.0
+       GUESSPOS_04= 560.0  597.0
+       GUESSPOS_05= 627.0  741.0
+       GUESSPOS_06= 801.0  890.0
+
+       These are the (x,y) guess positions for the 6 orders, starting
+       from the bottom of the array and moving upwards, as seen in
+       ximgtool.  The (0,0) point is located at the lower left of the
+       image.  If the guess position for an order needs to be edited
+       because the order location routine is failing, the user should
+       first load a raw flat into ximgtool.  The user will have to
+       rotate the raw flat image (all modes) by selecting
+       View->Rotation-> -Y to Y (7) in ximgtool.  The rotated image
+       should appeaer like the images loaded by the main Spextool GUI.
+       Using the cursor, determine a new (x,y) guess position for the
+       offending order keeping in mind the new guess position should
+       be located near the center of the order and away from the
+       cracks and bad pixels.  The (x,y) position should then be
+       entered into the appropriate `mode'.dat file after the equal
+       sign for the GUESSPOS_0x keywords.
+
+       Please now skip to step 9.
+
+
+     8b. Make a flat. Click on the Flat button in the middle of the
+       Main Base.  This brings up the Flat Base. Type in the numbers
+       of the files you will combine to make a flat (e.g.,
+       386-390). (Remember to change the File Prefix in the File Read
+       panel if the prefix is not 'flat'. If it *is* 'flat', you
+       should be using the Cal Base instead.) Choose the statistic
+       used for combining the flats. A typical choice might be
+       median. Give the full name of the output flat in the Full Flat
+       Name field (e.g., flat386-390, for a flat made from files
+       386-390). Click the Construct Flat button. Spextool will then
+       construct a flat from the input files. This takes some time and
+       requires a number of steps, including scaling and combining the
+       images, finding the edges of the orders, fitting a 2-D surface
+       to each order, replacing bad pixels, and normalizing the flat
+       by the 2-D surface. Spextool will not allow the user to do
+       anything while it processes the flat, but it will show you
+       where it has found the individual orders in the images, and it
+       will display the final normalized flat when it is finished. Now
+       proceed to step 8c.
+
+       If the order location fails, please see the note above in step 8a.
+
+     8c. Make an arc. Click on the Arc button in the middle of the
+       Main Base.  This brings up the Arc Base. If the arcs are all
+       "on" frames (SXD mode), choose A in the reduction mode.  If the
+       arcs have "on" and "off" frames (LXD mode), then choose A-B in
+       the reduction mode. Type in the numbers of the files you will
+       combine to make an arc (e.g., 391-393 or 391,392,393; either
+       notation is allowed).
+
+       If you are reducing LXD data, Spextool will require a sky
+       frame, which it will use in addition to the arcs for LXD
+       wavelength calibration.  Spextool uses the night sky lines in
+       the lower orders of the LXD modes since they have either very
+       weak or no argon lines. If your targets are extended sources,
+       type (or click) the full name of the sky image in the Full Sky
+       Name field in the second column (e.g., spc0467.b.fits). If your
+       targets are point sources, type (or click) the full name of an
+       A and B pair in the Full Sky Name field (e.g.,
+       spc0512.a.fits,spec0513.b.fits).  (Two files can be selected at
+       once if you click on the Full Sky Name button). This AB pair
+       should be chosen to be near in time and position to the arc
+       images. Spextool with then create a sky frame by computing
+
+       sky = (A+B) - abs(A-B).
+
+       If files for the sky frame are not entered, but are needed by
+       Spextool, the calibration routine will display an error message
+       and exit.
+
+       Give the full name of the flat field image made above (needed
+       for finding the edges of the orders). Give the full name of the
+       output arc in the Output Arc Name field (e.g., arc391-393, for
+       an arc made from files 391-393) and the full name of the output
+       one-dimensional (extracted) arc spectrum in the Output Wavecal
+       Name field (e.g., wavecal391-393 for arcs391-393). Click the
+       Construct Arc button.  Spextool will then construct a final arc
+       image from the input files, flat field the combination, fix bad
+       pixels in the result, and write the final image to the cal
+       path.  It will also extract the one-dimensional wavecal
+       spectrum from the arc frame at the location of the middle of
+       the slit, and write it to cal directory. The construction of
+       the wavelength solution and the different possibilities of
+       viewing the results are described in section 8a.
+
+    9. Make a Super Sky frame. If the user has acquired data by moving
+       the objects between two positions on the slit (i.e., the pair
+       mode), or if the user does not wish to subtract a sky frame,
+       this step is unnecessary. However, if the user acquired data by
+       nodding to sky between object frames, then a "Super sky" frame
+       can be created and subtracted from the object frames. Click on
+       the Sky button in the middle of the Main Base. This will bring
+       up the Sky base. Type in the numbers of the files you will use
+       to make a sky frame (e.g., 21,23,25,27,29). Remember to change
+       the File Prefix in the File Read panel if the prefix is
+       different from that used for your object images.) Give the full
+       name of the flat field image made above (needed for finding the
+       edges of the orders). Choose the statistic used for combining
+       the sky frames. A typical choices might be median. Give the
+       full name of the output sky frame in the Full Sky Name field
+       (e.g., sky21-29, for a sky made from files listed above). Click
+       the Construct Super Sky button. Spextool will then scale and
+       combine the sky frames, fix bad pixels, and write out the Super
+       Sky frame.
+
+III.  Extraction of Bright Objects
+
+   10. Prepare for extraction of your spectra by clicking either the
+       Point Source or Extended Source button in the middle of the
+       Main Base. This will bring up a set of panels (the Source Base)
+       for the chosen source type. For the illustrative purposes of
+       this manual, we will assume the observed objects are Point
+       Sources.
+
+   11. In the File Read panel, type in the desired prefix for the
+       output files (if the input files are in Index mode) or the full
+       output file name (if the files are in Filename mode). Choose an
+       output format. If you wish to use some of the other IDL routines 
+       we have developed for the analysis of SpeX data, choose FITS. (Both
+       FITS and Text can be chosen as well.) If you wish to use IRAF
+       (for example) to process the output files further, choose Text.
+        
+       The FITS files produced by Spextool have a slightly different
+       format than that expected by IRAF. IRAF can, in fact, read and
+       display the Spextool output FITS files (using splot, for
+       example), but they won't appear to be wavelength
+       calibrated. This is because the wavelength information is
+       stored in "image band" 1 - in IRAF-speak - and the flux data
+       are stored in bands 2-7 for spectral orders 3 (K) through 8
+       (I).  (See step 14 for the naming convention and wavelength
+       ranges of the orders.)
+       
+       The output FITS files contain a 3-D array of data consisting of
+       sets of triplet arrays of data for each aperture and each
+       order, where each triplet is composed of an array for the
+       wavelength, an array for the flux, and an array for the
+       error. The triplets for each aperture are stacked behind one
+       another, followed by the triplets for the next order, etc. If
+       no orders have been skipped or deslected in the extraction
+       process, the contents of aperture Y in order X can be found as
+       follows:
+
+       lambda = array[*,0,( X - (smallest order number))*naps + (Y-1)], 
+       flux   = array[*,1,( X - (smallest order number))*naps + (Y-1)], 
+       error  = array[*,2,( X - (smallest order number))*naps + (Y-1)]
+
+       For example, for an SXD file with two apertures, the wavelength
+       array for aperture 1 in order 3 is located in array [*,0,0],
+       the flux is in array [*,1,0] and the error is in array
+       [*,2,0]. For aperture 2, the wavelength is in array [*,0,1],
+       the flux is in array [*,1,1] and the error is in array
+       [*,2,1]. For order 4, the flux for aperture 1 is in array
+       [*,1,2], while the flux for aperture 2 is in array [*,1,3]. For
+       order 5, the fluxes for the two apertures are in arrays [*,1,4]
+       and [*,1,5], etc.
+
+       The text files contain a FITS header followed by 3*NORDERS*NAPS
+       columns, where NORDERS is the number of orders and NAPS is the
+       number of apertures traced and extracted.  The columns come in
+       triplets and contain the wavelength in microns, the flux, and
+       the error estimate for the spectrum in the various extracted
+       orders, arranged from lowest to highest order. For example, the
+       first three columns might contain the wavelengths, fluxes and
+       errors for the K band. The next three contain the data for the
+       H band, etc. The text files can be converted to FITS files
+       usable with IRAF by extracting the wavelength and flux columns
+       associated with a particular order/aperture and then using the
+       IRAF routine rspectext with the parameter dtype=nonlinear.
+
+   12. In the Reduction Mode panel, to the right of the File Read
+       panel, select the type of observing mode used to acquire the
+       data. If you do not wish to do any sky subtraction at all,
+       choose A. If you have a sky frame or made made a "Super Sky",
+       choose A-Sky, and give the number or name of the (Super) Sky
+       frame. If the data were acquired in the standard IR method of
+       moving the object between two positions on the slit (the "pair"
+       method), choose A-B.
+
+       If the Reduction Mode is A-B, type in the numbers of the first
+       two object frames (e.g, 376,377 or 376-377; either notation is
+       allowed), type or click in the name of the flat field produced
+       above (e.g., flat386-390.fits), and type or click in the full
+       name of the Wavecal spectrum generated above (e.g.,
+       wavecal391-393.fits). (Note, the wavecal file should be entered here,
+       NOT the arc file!) If you do not want to divide by the flat
+       field, then turn off the flat fielding in the Other base. The
+       flat field image is still required because its header contains
+       information necessary for extraction process. If you do not
+       want to wavelength calibrate the data, leave the Wavecal field
+       empty. Then click the Load Image button. Spextool will apply
+       linearity corrections to the images, then subtract the pair of
+       images and divide the result by the normalized flat field. The
+       resulting 2-D image will be displayed.
+
+       Pixels in either the A or B frame that have values above a
+       specified level (close to saturation) are colored red in the
+       ximgtool widget. SpeX observers are strongly advised never to
+       allow the counts in their spectra to exceed 4000 DN, as linearity
+       corrections become highly uncertain above this value. The nominal
+       "red pixel" level in Spextool is set close to the saturation
+       level at 5000 DN. The user can turn off the identification of
+       these highly non-linear pixels by changing to the Other Base and
+       unclicking "Plot Saturated Pixels".  The user can also change the
+       specified identification level (default = 5000 DN) in the Other
+       Base.
+
+   13. In the Find Aperture Positions panel, click on the Make Super
+       Profiles button. This will construct "average" spatial (i.e.,
+       along the slit) profiles ("Super Profiles") in the various
+       orders by performing a median along the wavelength direction at
+       each spatial point. The Point Source version of this procedure
+       automatically attempts to identify and ignore columns of data
+       with little or no source flux; only those columns with
+       sgnificant source flux are used to construct the Super
+       Profiles. The Super Profiles are displayed in a separate
+       window, which can be resized to see the results.
+
+       If the user wishes to define extraction apertures based on the
+       Super Profiles (which is normally the case), s/he should click
+       on the Manual button. In some cases, the user does not want to
+       specify apertures defined from the observed profiles, but
+       rather wishes to extract spectra corresponding to apertures
+       which have been previously defined based on observations of
+       another object (e.g., a standard star). In this case, the user
+       should click the Import Coeffs button rather than the Manual
+       button. The file containing the trace of the previously
+       extracted object should be entered in the Trace File field (see
+       below).
+
+       Choose the number of apertures to be found automatically in
+       these profiles and select the Auto button. For typical spectra 
+       obtained in pair, or A-B, mode, there will be two apertures, 
+       corresponding to the object in the A frame and its negative 
+       counterpart in the B frame.  Click on the Find/Store Aperture 
+       Positions button and Spextool will locate the centers of these 
+       profiles automatically, and give the average locations, over all 
+       the orders, of the peaks of the profiles in the Aperture field. 
+       The peak positions will be indicated with solid blue lines in the 
+       Super Profile plot window.
+
+       If the user has a faint point source for which only a noisy
+       Super Profile can be constructed, the Guess or Fix Positions
+       option can be chosen. The approximate positions in ARCSECONDS 
+       along the slit for the centers of the extraction apertures (i.e., 
+       the peaks of the profiles) should be given in the Apertures field. 
+       Optionally, the user can move the cursor into the profile plot 
+       panel, type 's', and then choose aperture positions by aligning 
+       the red vertical line of the cursor at the desired location and 
+       clicking with the left-most mouse button. A dashed blue line will 
+       appear in order to denote the selected aperture position. The user 
+       can continue choosing aperture positions with the mouse button, or 
+       can start over by typing 's' again. 
+
+       If Guess is selected, Spextool will use these aperture positions 
+       as initial guesses to locate the centers of the profiles. In this 
+       case, as with Auto, the centers of the profile peaks (i.e., the 
+       average peak positions in arcseconds for all the orders) found by 
+       Spextool will be automatically updated (or entered) in the Apertures 
+       field in the Find Apertures panel and the new positions will be 
+       shown with solid blue lines on the Super profiles plot. If Fix is 
+       selected, the location of the apertures as specified by the user 
+       will be adopted and will not be modified in the Aperture field or 
+       on the Super profiles plot. The dashed blue lines will become solid 
+       blue lines at the specified locations of the aperture position centers.
+
+       If Spextool has difficulty locating peaks in the Super Profiles
+       in some orders, the user may specify aperture positions on an
+       order-by-order basis. At the top left of the Super Profile plot,
+       the user can choose the Per Order, instead of the default All
+       Orders, selection.  The user should then type 's'. S/He will then
+       be able to specify aperture positions in each order by moving the
+       cursor over the order and clicking the left-most mouse button at
+       the desired position. When the use is finished selecting aperture
+       positions, s/he should click on the Find/Store Ap Positions
+       button. Spextool will either attempt to find the profile peaks
+       for the aperture centers (if Guess is selected) or adopt the
+       specified locations (if Fix is selected). The mean aperture
+       positions for all the orders will be given in the Apertures
+       field.
+
+       If the user has extended objects, the positions in ARCSECONDS
+       along the slit of each aperture to be extracted can be entered
+       in the Positions field. Optionally, the user can move the
+       cursor into the profile plot panel, type 's', and then choose
+       and aperture position by clicking with the left-most mouse
+       button. A dashed blue line will appear to denote the selected
+       aperture position. The user can continue choosing aperture
+       positions with the mouse button, or can start over by typing
+       's' again. Click on the Find/Store Aperture Positions button 
+       and Spextool will store the the specified positions. At this 
+       point, the dashed blue lines will become solid blue lines at 
+       the locations of the apertures. The method of specifying and
+       finding apertures for extended objects is identical to that used
+       for point sources when the Fix option is selected (see description
+       above).
+
+       Note that differential atmospheric refraction will cause the
+       peaks in the Super Profiles to be located at slightly different
+       positions (in arcseconds) along the slit in the various
+       orders. This is automatically corrected for in the Point Source
+       mode, because Spextool finds the peaks in each order
+       independently. However, it is not corrected for in the Extended
+       Source mode. The user should keep this in mind when specifying
+       aperture positions in the Extended Source mode. This problem can
+       eliminated to some extent by specifying the aperture positions in
+       each order separately using the Per Order option described above.
+ 
+   14. Choose the spectral orders to be extracted. Normally the
+       observer will want all spectral orders. However, if an order
+       contains so little flux that the spectrum cannot be traced, the
+       user should de-select (un-click) that order.
+
+       For the short-wavelength cross-dispersed mode (SXD: 0.8-2.5
+       microns), the orders and the corresponding wavelength ranges
+       and window labels are as follows:
+
+        Order       Wavelengths      Window 
+        -----       -----------      ------
+                        SXD
+                        ---
+          8         0.81 - 0.90       "I" 
+          7         0.81 - 1.03       "z"
+          6         0.94 - 1.20       "J1"
+          5         1.13 - 1.45       "J2"
+          4         1.41 - 1.81       "H"
+          3         1.88 - 2.42       "K"
+
+       The wavelength range covered by order 8 completely overlaps
+       that covered by order 7, but to avoid confusion we have adopted
+       this naming convention. Note that the beginning and ending
+       wavelengths of each window/order are approximate.
+
+       For the long-wavelength cross-dispersed mode (LXD: 2.0-5.5
+       microns), the orders, wavelength ranges, and window labels are
+       as follows:
+ 
+        Order                    Wavelengths                    Window 
+        -----       --------------------------------------      ------
+                     LXD1.9        LXD2.1        LXD2.3        
+                     ------        ------        ------
+         10         1.92-2.18                                    "K1"
+          9         1.98-2.42     2.23-2.42                      "K2"
+          8         2.23-2.73     2.24-2.73     2.40-2.73        "K3"
+          7         2.55-3.12     2.55-3.12     2.55-3.12        "Kx"
+          6         2.97-3.64     2.97-3.64     2.97-3.64        "L1"
+          5         3.56-4.19     3.56-4.37     3.56-4.37        "L2"
+          4                       4.45-5.04     4.45-5.44        "M"
+
+       The start and end wavelengths of each XD mode are good to
+       +/-0.01 micron due to repositioning of the grating turret.
+
+       Note that not all orders can be obtained in a single grating
+       setting in the LXD mode. In the "LXD1.9" setting, orders 5-10
+       can be recorded. In the "LXD2.1" setting, orders 4-9 are
+       available. In the "LXD2.3" setting, orders 4-8 can be recorded.
+
+       In the low resolution prism mode, there is only a single order,
+       which covers 0.70 - 2.56 microns.
+
+   15. Now click on the Trace Objects button in the Trace Objects
+       panel.  Spextool will trace the centers of the apertures found
+       above. If the extraction apertures haven't been fixed by the
+       user, Spextool will fit a Gaussian to the spatial profile at
+       every column, using the aperture centers determined above as
+       the initial guess. The centers of the Gaussians are then fit
+       with a polynomial to derive the trace position as a function of
+       column. If the user has fixed the extraction aperture (e.g.,
+       for an extended source or a faint point source), Spextool will
+       simply plot the specified positions on the image and use these
+       as the traces.
+
+       The coefficients of the fitted polynomial used to trace the
+       location of the object spectrum can be stored in an output file
+       and used later for defining the location of a subsequent
+       spectrum. To do this, the user should enter a file name for the
+       output trace file (e.g., trace.dat) in the Filename field in
+       the Trace Objects panel and then click on the Write Trace
+       button. The output file can then be used as described in step
+       13 above.
+
+   16. a. Point Sources:
+
+       The extraction apertures can now be defined in the Define
+       Apertures panel. In Point Source mode, Spextool now carries out
+       a weighted profile (or "optimal") extraction as the default
+       extraction method.  (Optimal extraction cannot be performed on
+       extended sources and Spextool has no capability for optimal
+       extraction in Extended Source mode.)  Weighted profile
+       extraction requires a radius value over which the source
+       profile is defined. This is the PSF Radius value found at the
+       top of the Define Apertures panel. The PSF Radius value should
+       be set to the radius value in ARCSECONDS which contains all the
+       flux from the source - that is, at which the Super Profile of
+       the source drops to zero flux. This value will vary from source
+       to source depending on the seeing conditions at the time of the
+       observations. For the typical seeing at the IRTF, a typical
+       value might be in the range of 2.0 - 2.5 arcsecs.
+ 
+       Note that the PSF Radius is a critical parameter for proper
+       flux calibration of spectra reduced with the optimal extraction
+       mode of Spextool, as Spextool will normalize the Super Profile
+       to unity within the PSF Radius. For a description of optimal
+       extraction, please see, e.g., Horne 1986 (PASP, 98, 609).
+
+       If the user does not wish to perform Optimal Extraction, s/he
+       should click on the Other button in the middle of the Main Base
+       and bring up the Other Base. (The Other Base contains parameter
+       values needed by Spextool in the various stages of the
+       extraction proces. Normally these parameters do not have to be
+       [and either should not or cannot be] adjusted by the user.)
+       De-select Optimal Extraction at the bottom of the Reduction
+       Steps panel (third from the left) and return to the Point
+       Source Panel. The PSF Radius field will be grayed out.
+
+       For either Optimal or non-Optimal Extraction, the user must
+       choose the value of the radius of the extraction aperture (Ap
+       Radius) in ARCSECONDS, based on the Super Profiles found in
+       step 13. The Aperture Radius is the size of the aperture which
+       Spextool uses to compute the source flux at each column. If
+       Optimal Extraction is being performed, the Aperture Radius can
+       be as large as the PSF Radius, but no larger; in this case,
+       Spextool will compute an estimate of the source flux from the
+       weighted mean of the values derived from the pixels within the
+       Aperture Radius size.  For non-optimal extraction, Spextool
+       will simply sum the source flux from the pixels within the
+       Aperture Radius.
+
+       If non-optimal extraction is being performed, the user must
+       choose whether or not to subtract any background. (There is no
+       subtraction option if optimal extraction is chosen: the
+       background level must be subtracted.) If background subtraction
+       is desired, click the background subtraction button (BG Sub
+       ON). (This button will be automatically selected in the Optimal
+       Extraction mode, where background subtraction is required.)
+
+       In the case of background subtraction, the user must give the
+       start radius in ARCSECONDS for the background window, and the
+       width of this background window in ARCSECONDS. The start radius
+       for the background window must be larger than the PSF Radius
+       (in Optimal Extraction mode) or the Aperture Radius (in
+       non-optimal extraction mode). Specify the degree of the
+       polynomial used to fit the background in these windows and
+       across the object aperture.  Degree = 0 is a constant; Degree =
+       1 is a linear fit with slope and offset.  Now click on the
+       Define Apertures button. Spextool will show the apertures used
+       for both the background (in red) and the object (in green) on
+       the Super Profiles plot. If Optimal Extraction is being
+       performed, the PSF Radius value will be marked with a blue
+       vertical dashed line. The Aperture Radius value will be marked
+       with a green vertical dashed line. Spextool will also draw the
+       extraction apertures (in green) on the background subtracted
+       image.
+
+       During the optimal extraction process, Spextool will measure the
+       effective seeing size for each of the object apertures, by
+       determining the spatial width of the object super profile as a
+       function of mean wavelength for each order. We have found that,
+       under superb seeing conditions (less than or equal to ~0.4
+       arcseconds), optimal extraction can fail as a result of the poor
+       sampling of the object profiles. (Recall that the pixel scale for
+       the SpeX detector is 0.15 arcseconds.) In such cases, optimal
+       extraction will incorrectly weight the pixel values within the
+       extraction aperture, and produce spurious features in the output
+       spectra. To guard against this, Spextool will generate a warning
+       window if the measured seeing divided by the plate scale (0.15
+       arcseconds per pixel) is less than a threshold value of 3
+       (pixels). The user should then carefully inspect his/her
+       spectra. If the user wishes to turn off this check, s/he should
+       click on the Other button and deselect "Check Seeing" under
+       Misc. Parameters. Spextool will print the FWHM values found for
+       each aperture in each order on the terminal window. For a point
+       source observed in the standard ABBA fashion, the values in the
+       left column correspond to the positive aperture profile (the
+       left-most aperture in xplotprofiles) or A beam and the values in
+       the right column correspond to the negative profile (the
+       right-most aperture in xplotprofiles) or B beam.
+
+       b. Extended Sources:
+
+       If the user has extended objects, the radii of each aperture
+       defined in step 12 must be entered in the Ap Radius field
+       (e.g., 1.5,1.5 for 2 apertures). The radii values should be
+       separated by commas. (Optimal Extraction is unavailable for
+       Extended Source extraction.) The positions, in arcseconds along
+       the slit, of the background windows must also be specified. An
+       example might be 0-2, 13-15.  Note that differential
+       atmospheric refraction will cause peaks to be located at
+       slightly different positions along the slit. This is
+       automatically corrected for in the Point Source mode, because
+       Spextool finds the peaks in each order independently. However,
+       it is not corrected for in the Extended Source mode. The user
+       should keep this in mind and make sure the extraction aperture
+       widths are large enough to account for the variation in
+       position of the spectrum with order.
+
+   17. The spectra will be extracted when the user clicks on the
+       Extract button. For non-optimal extraction, Spextool will fix
+       known bad pixels within the extraction apertures in the
+       pair-subtracted, flat-fielded image. (Bad pixels are simply
+       ignored in the Optimal Extraction procedure.) It will then fit
+       the background in each background window in each column and in
+       each order, subtract the fit from each pixel in the aperture,
+       and then compute the flux in the aperture. If optimal
+       extraction is performed, the output flux at each column will be
+       computed from the weighted average of the flux estimates from
+       the pixels in the extraction aperture (2 x Aperture Radius). If
+       optimal extraction is turned off, the flux at each column will
+       be simply the sum of the flux values from all the pixels in the
+       extraction aperture.
+
+       In order for optimal extraction to work properly, the
+       superprofiles must be determined as accurately possible.
+       Although it is difficult to define a priori what a "correct"
+       superprofile is, some guidelines are as follows.  The
+       background of the profile should be flat and near zero.  The
+       profiles of point sources should be smooth and roughly Gaussian
+       or Lorentzian, with a width given by the effective seeing. They
+       should contain no "hot" pixels or other anomalies. If these
+       criteria are not met, we suggest that the user turn off optimal
+       extraction and extract the spectra in the standard manner. By
+       comparing the standard summed extraction with the optimal
+       extraction results, the user can investigate whether the
+       "noisy" superprofiles are corrupting the output spectra
+       produced by optimal extraction. We also suggest the user try
+       combining all of the individual data frames (see Step 20)
+       before extracting the spectra. This should increase the S/N by
+       the square root of the number of frames combined and allow
+       Spextool to generate a smooth superprofile.  Optimal extraction
+       can then be performed on the combined frame.
+
+       Once it has finished extracting the object spectra, Spextool
+       will apply the wavelength solution determined from the arc file
+       and wavecal spectrum generated earlier (step 8).
+
+       Note: Beginning with version 3.2 Spextool no longer extracts
+       the arc spectra at the same position on the slit as the object
+       spectra. The arc spectra are extracted at the middle of the
+       slit and applied to each aperture in each object frame. (See
+       specifically step 7a.) This method is more consistent with our
+       assumption that the slits are aligned with the detector
+       columns. We have also found that this increases the S/N in
+       those wavelength sections dominated by rapidly varying
+       atmospheric emission/absorption.
+
+       Note: If multiple apertures are extracted, the apertures are
+       numbered beginning with the left-most one (smallest arcsecond
+       values along the slit) in the xplotprofiles window. Since
+       location along the slit has an origin at the bottom of the slit,
+       this aperture will also be the bottom or lower one seen in the
+       ximgtool image.
+
+   18. View the spectra. The wavelength calibrated spectra will then
+       be displayed in a widget called xvspec (which can also be
+       called separately from xspextool by typing xvspec at the IDL
+       command line).  The extraction aperture to be viewed can be
+       selected from the Aperture pull down menu.
+
+       Once the spectra are loaded, the ranges of the individual
+       orders can be changed by clicking on the Modify Range button
+       and then selecting an order from the Order pull down menu and
+       entering Min and Max values for the y axis of that order.
+  
+       The spectra can be smoothed with a Gaussian by clicking on the
+       Gaussian Smooth button, and choosing the width of the smoothing
+       kernel (in pixels) from the pull down menu. Header information 
+       can be viewed by clicking on the Header button.
+ 
+       The color used to plot the spectra can also be selected by
+       clicking on the Color button. A postscript file can also be
+       written out by typing 'p' when the cursor is in the plot
+       window.
+
+       In addition, the error spectrum and single-to-noise ratios can be 
+       displayed.
+
+       To view a single order, click on the order with the left-most
+       mouse button.  A widget called xzoomplot will appear with the
+       spectrum plotted.  The user can change the x and y range by
+       hand using the fields at the bottom of the widget or
+       interactively using the cursor. To learn about cursor commands
+       type 'h' in the plot window.
+
+   19. Once the first pair of object spectra have been extracted and
+       the user is happy with the extraction parameters, the full list
+       of file numbers for the rest of the files in an observing set
+       can be inserted in the Source Images field in the Reduction
+       Mode panel (e.g., 376-381). All of these images will then be
+       reduced automatically by clicking on the Do All Steps button in
+       the panel to the right of the Reduction Mode panel.
+
+IV.  Extraction of Faint Objects
+
+   20. Extracting the spectra of faint objects can be difficult
+       because Spextool may have problems accurately tracing the
+       objects. If Spextool cannot trace the object spectrum in the
+       order(s) of interest on a single pair-subtracted or
+       background-subtracted image, the user should combine the 2-D
+       images before extraction to increase the signal-to-noise of the
+       faint orders. Move to the Combine Base by clicking on the
+       Combine Images button in the middle of the Main Base.  If the
+       data were acquired by moving the object between two positions
+       on the slit (the pair method), choose A-B; if not, choose
+       A. Type the image numbers into the Image field, e.g., 376-381,
+       and enter the full name of the flat field image made above in
+       step 7 in the Full Flat Name field.
+
+       The sky level may change between successive images pairs. If
+       the objects do not fill the slit completely in the spatial
+       dimension, choose On for BG subtraction. Spextool will subtract
+       the median value of the pixels along the slit from each column
+       (in every order in each image) before combining the images.
+ 
+       Choose the statistic used for combining the images. A typical
+       choice might be median.  Note that a weighted mean may not be an
+       appropriate statistic because the assumptions underlying the
+       weighted mean as the best estimate of the mean may not be
+       satisfied due to guiding error and slit losses.  This effect is
+       most pronounced in short integration exposures.  If Mean is
+       chosen then the error of the final combined image is computed as
+       sigma_mu = sigma/sqrt(N).  If a median is chosen, then the error
+       on the median is computed as sigma_med = MAD/sqrt(N) where the
+       MAD (Median Absolute Deviation)=1.482*median(|data-median|).  The
+       constant 1.482 is set so the MAD = sigma for a Gaussian
+       distribution.
+
+       Finally, give the full name of the output file in the Output
+       Name field (e.g., spc376-381.fits) and click on the Combine
+       Images button.  Spextool will then combine the images and write
+       the result to the proc directory.
+
+   21. The combined image may now be extracted by defining the Data
+       Path in the Path Base to be the proc directory. The file read
+       mode should then be set to Filename and the reduction mode set
+       to A. The user can then proceed as normal. Spextool will write
+       both beams (apertures) to a single file. They can be combined
+       in xcombspec (see step 23) by choosing the Combine Apertures
+       options.
+
+V.  Additional Processing of the Output Spectra
+
+   22. The individual reduced spectra (FITS files) of a source may be
+       combined with a separate IDL program called xcombspec. Bring up
+       the xcombspec GUI within IDL by typing xcombspec. A helpfile is
+       available at the bottom of the widget which will guide you
+       through the combining process.
+
+   23. Further processing of the reduced and combined spectra can be
+       carried out with the following routines, which can be started
+       within IDL by simply typing their names:
+ 
+       a. xtellcor        - to perform telluric corrections;
+       b. xtellcor_finish - to perform telluric corrections when the 
+                            telluric corrections when the telluric correction
+                            curve has already been generated with xtellcor. 
+       c. xmergeorders    - to merge the separate telluric-corrected spectra 
+                            in the various orders of a single output file 
+                            into a single spectrum;
+       d. xcleanspec      - to 'clean' the output spectrum, by removing noisy
+                            sections; also allows the user to smooth the 
+                            spectrum;
+       e. xmergexd        - to merge an SXD and an LXD spectrum of a source 
+                            into a single spectrum;
+       f. xlightloss      - to correct for slit losses (relative to a standard 
+                            star observation) when the slit is not at the 
+ 			    parallactic angle.
+
+       All of these procedures have associated help files to guide the
+       user.  These routines were formerly contained in a separate
+       package, called Spextool_extension. However, this package has
+       now been completely incorporated into the Spextool package.
+
+VI.  Miscellaneous
+
+   24.  The output files from Spextool v1.x will not work with the new
+        xvspec and other routines because they do not contain and
+        error spectrum. To convert v1.5 FITS files to v2.0 files, use
+        the routine v1tov2.pro. At the IDL prompt type,
+
+        v1tov2,inputfile,outputfile 
+
+        where inputfile is the string file name of the inputfile and
+        outputfile is the string file name of the result.
+
+   25.  The wavelength calibration for spectra reduced with v3.1 can
+        be updated using a routine called xfwc (XFixWaveCal).  The
+        user must reconstruct the flats and arcs (and now wavecal
+        files) as described in step 7.  The inputs of xfwc are similar
+        to other Spextool widgets.  Simply put the new wavecal file
+        into the Wavecal File field and the program will replace the
+        v3.1 wavelengh calibration with the new wavelength calibration
+        stored in the wavecal file.
+
+---------------------------------------------------------------------------
+

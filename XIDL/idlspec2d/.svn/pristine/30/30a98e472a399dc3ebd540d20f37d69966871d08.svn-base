@@ -1,0 +1,7 @@
+Parameter files
+---------------
+opConfig*.par           CCD dimensions: data, bias, overscan regions.
+opBC*.par               Bad pixel file.
+opECalib*.par           CCD electronics: gain, readout, fullwell and linearity
+                        Linearity values are not used.
+

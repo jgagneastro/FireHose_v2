@@ -1,0 +1,12 @@
+UKIRT-zJHKL   z,J,H,K,Lp   UKIRT_z.dat,UKIRT_J.dat,UKIRT_H.dat,UKIRT_K.dat,UKIRT_Lp.dat                        1  0.0
+UKIRT-MKO     J,H,K,Lp     UKIRT-MKO_J.dat,UKIRT-MKO_H.dat,UKIRT-MKO_K.dat,UKIRT-MKO_Lp.dat                    1  0.0
+atMKO         J,H,K,Lp     atMKO_J.dat,atMKO_H.dat,atMKO_K.dat,atMKO_Lp.dat                                    1  0.0
+MKO1          J,H,K,Lp,Mp  MKO_J.dat,MKO_H.dat,MKO_K.dat,MKO_Lp.dat,MKO_Mp.dat                                 1  0.0
+MKO2          Kp,Ks        MKO_Kp.dat,MKO_Ks.dat                                                               1  0.0
+2MASS         J,H,K_s      2MASS_J.dat,2MASS_H.dat,2MASS_Ks.dat                                                0  0.0
+CIT           J,H,K        CIT_J.dat,CIT_H.dat,CIT_K.dat                                                       1  0.0
+IRAC           B4          IRAC_B4.dat                                                                         1  0.0
+PanSTARRS     z,y          PS_z.dat,PS_y.dat                                                                   1  0.0
+Hillenbrand   Y            Y.dat                                                                               1  0.0
+SpeXRun       Y,J,H,Ks     PS_y.dat,2MASS_J.dat,2MASS_H.dat,2MASS_Ks.dat                                       0  0.0
+WFCAM         Y,J,H,K    WFCAM_Y.dat,WFCAM_J.dat,WFCAM_H.dat,WFCAM_K.dat                         1  0.0

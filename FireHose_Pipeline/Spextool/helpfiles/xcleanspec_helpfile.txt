@@ -1,0 +1,112 @@
+XCLEANSPEC
+----------
+
+Xcleanspec allows the user to 1.)  clean bad pixels by replacing
+the bad pixels using nearby values, 2.) remove regions of telluric 
+noise and 3.) smooth the spectra.
+
+Xcleanspec is a fully resizing widget.
+
+Cursor commands:
+
+a - Sets the 'a'bsolute range to the current x and y range
+
+c - Clear mouse mode.
+    Use to clear a zoom, fix, or remove session.
+
+f - To fix a region of the spectrum.
+    Press and release the left mouse button on the left and 
+    right side of the bad region.  The bad region is replaced 
+    using the edge pixels to define a line.  Type "s" to save 
+    the edit or "u" to undo the edit.
+
+i - To zoom IN in whatever zoom mode the cursor is currently
+    in.
+
+o - To zoom OUT in whatever zoom mode the cursor is currently
+    in.
+
+r - To remove a region of the spectrum.
+    Press and release the left mouse button on the left and 
+    right side of the bad region.  The bad region is replaced
+    with NaNs.  Type "s" to save the edit or "u" to undo the
+    exit
+
+s - To save the edit
+
+u - To undo an edit.  The edit will not be stored.
+
+w - To plot the entire spectrum
+
+x - Enters x zoom mode
+    Press and release left mouse button at lower x value and 
+    then at upper x value.
+
+y - Enters y zoom mode
+    Press and release left mouse button at lower y value and 
+    then at upper y value.
+
+z - Enters zoom mode
+    Press and release the left mouse button in one corner of the
+    zoom box and then move the cursor to the other corner and 
+    press and release the left mouse button.
+
+------------------------------------------------------------------------------
+
+0.  Type "xcleanspec" at the IDL prompt. This will bring up the 
+           Xcleanspec widget.
+
+I.   Loading the Data
+
+       1.  If the user is not working in the directory where the 
+           data is stored, enter the path either by clicking on 
+           the Path button or by typing the path into the field.
+           IF THE USER IS IN THE DIRECTORY WHERE THE DATA IS LOCATED, 
+           THEN THIS FIELD CAN BE LEFT BLANK.  
+
+       2.  Load the standard spectra by giving the filename in the
+           "Input Spectrum" field.
+
+II.  Cleaning the Spectra
+
+       3.  The user has two options to clean the spectra.  To fix 
+           a region of the spectra, type 'f' and then press and release 
+           the left mouse button on the left and right side of the 
+           bad region.  The bad region is replaced using the edge 
+           pixels to define a line.  Type "s" to save the edit or 
+           "u" to undo the edit.  Alternatively, the user can simply 
+           remove a region of the spectrum by typing 'r' instead of 'f'.
+
+III. Smoothing the Spectra
+
+       4.  Choose either "Savitzky-Golay", which will smooth the spectra
+           while preserving the average resolving power, or Gaussian which
+           will allow the user to smooth the spectra with a Gaussian kernel.
+
+       5a. The Savitzky-Golay (SG) smoothing routine is described in 
+           Numerical Recipes.  Xsmoothspec will automatically 
+           provide an estimate of the best SG window based on the slit width 
+           in pixels. The best window size is typically 1 to 2 times the slit
+           width, although we have found that for the 0.3 arcsecond slit, 
+           1.5 times the slit width does nothing.  The degree of the 
+           smoothing function can also be chosen, but must always be less 
+           than the window size.  *PLEASE CHECK THE FINAL SPECTRA TO MAKE
+           SURE YOU ARE HAPPY WITH THE RESULTS.* 
+
+       5b. The Gaussian routine will smooth the spectra with a Gaussian
+           with the requested FWHM.  Note since the resolving power 
+           changes as a function of wavelength, only the average resolving
+ 	   power will be modified.  The default FWHM is the slit width given 
+	   in pixels.
+
+
+       6.  The resulting smoothed spectra can now be cleaned again using 
+           either the 'f' or 'r' cursor commands.  However, the spectra
+           cannot be smoothed again.
+
+IV.  Write the Output File
+
+       6.  Give the name of the output file in the "File Name" field and 
+           click on the "Write File"  button.
+
+

@@ -1,0 +1,55 @@
+; DOCUMENTATION ON AND SAMPLE OF A USER GENERATED SCRIPT USED TO EDIT THE IDL 'firestrct' STRUCTURE
+;
+; Scripts like this may be run using the 'Run Script (and Save)' button in the 'Structure' tab of the firehose GUI.
+; To do this, the script must be called '*firestrct_script.txt', and must be stored in the current working directory of
+; the firehose GUI (which is the directory from which firehose is opened, and may be determined from 
+; Menu->Display->Current Working Directory).
+
+; Empty lines, and lines that begin with ';', '#', or '%' are ignored in your user-generated edit script.
+; EXCEPTION: The sequence '### ' marks the beginning of your template line, which tells the code what information all the 
+; columns hold.
+
+;;;;;; TEMPLATE LINE ;;;;;;;;
+
+; The template line holds info on what column stores what information.  For example, 
+
+### exptype illumflatfi tfiles junk comments
+
+; These words must correspond to tag names within the firestrct structure.  They must be exactly the same as the tag names
+; (for example, 'RA-(DEG)' does not cut it if one wants to change the 'ra_deg' tag), although incomplete names are allowed
+; if no ambiguity exists (so, the 'illumflatfi' instead of 'illumflatfile' here will work, but using 'ra' instead of 
+; 'ra_deg' will not, because 'raw' is also a tag name).  The matches are caps insensitive.  If an erroneous column is detected
+; (like the 'junk' listed here, which is not a valid tag), or an ambiguity exists (like 'ra'), then all of the data stored
+; in that column is ignored.
+
+;;;;;; DATA LINES ;;;;;;;;;
+
+; The first column must always be the fitsfile to edit.  Notice that this does not have to be listed in the template (although 
+; one can put 'fitsfile' if one desires- it will be ignored).  One may put either the file name, or the file number.  If a 
+; file number is provided, then the name is assumed to be of the form fire_####.fits (ie, 4 digits with zero padding).  The 
+; columns after that must correspond to the columns listed in the template.  Comments/warnings cannot include spaces.
+
+0001 SCIENCE Illumflat_0.60_0019to0116.fits 0003;0004 ljgadg Bad_seeing
+10 TELL Illumflat_0.60_0019to0116.fits Unknown djaldf Too_close_to_moon
+fire_24.fits FLAT Illumflat_0.60_0019to0116.fits 0007;0008 sldgija Bad_illum_flat
+
+; Notice that the telluric files must be presented as a semi-colon delineated list: fire_0001.fits here will be matched with
+; files fire_0003.fits and fire_0004.fits as tellurics.
+
+
+; The user is allowed to change the template midway through the script.  In addition, the user may provide a range of
+; fitsfile number by employing a dash or using a '*' (although the latter must include the 'fire_' prefix).
+
+### object slit obj_id
+
+35-38 NeNeAr 0.8 -1
+fire_101* Moon 0.6 2
+
+
+;;;;;; IDL CODE DETAILS ;;;;;;;;;
+;
+; Scripts like this one many be run with run_firestrct_script.pro, which may be called as
+; run_firestrct_script, firestrct
+; See the actual code, located in $FIRE_DIR/Utils/ for more details.  The 'Run Script' button in the 'Structure' tab
+; of the firehose GUI calls this function.  Toggle the Verbose flag to the 'on' position in this GUI to print
+; status information to screen, or the Loud flag to print extensive details.

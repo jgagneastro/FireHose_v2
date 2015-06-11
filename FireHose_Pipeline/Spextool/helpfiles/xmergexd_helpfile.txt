@@ -1,0 +1,100 @@
+XMERGXD
+------------
+
+Xmergexd allows the user to merge the ShortXD and LongXD
+spectra into a single spectrum. 
+
+Xmergexd is a fully resizing widget.
+
+Cursor commands:
+
+b - Enters the cutting mode for the blue spectrum.  
+
+c - Clear mouse mode.
+    Use to clear a zoom, fix, or remove session.
+
+i - To zoom IN in whatever zoom mode the cursor is currently
+    in.
+
+g - Enters the cutting mode for the green spectrum.  
+
+l - Changes the cutting direction to 'Left'
+
+o - To zoom OUT in whatever zoom mode the cursor is currently
+    in.
+
+r - Changes the cutting direction to 'Right'
+
+u - To undo a cut created with either 'b' or 'g'
+
+w - To plot the entire spectrum
+
+x - Enters x zoom mode
+    Press and release left mouse button at lower x value and 
+    then at upper x value.
+
+y - Enters y zoom mode
+    Press and release left mouse button at lower y value and 
+    then at upper y value.
+
+z - Enters zoom mode
+    Press and release the left mouse button in one corner of the
+    zoom box and then move the cursor to the other corner and 
+    press and release the left mouse button.
+
+
+I. Starting Up
+
+   1. Type "xmergexd" at the IDL prompt. This will bring up the 
+      Xmergexd panel.
+
+   2. Type in the file name of the ShortXD data, or click on the "ShortXD"
+      button and choose the file from the list shown.
+
+   3. Type in the file name of the LongXD data, or click on the "LongXD"
+      button and choose the file from the list shown.  
+
+   4. Select whether or not to allow errors to be propagated throughout 
+      the combining procedure.
+
+   5. Click on the "Load Spectrum" button to load the data file.
+
+II. Combining the Spectra
+
+   6. Choose which spectrum, the SXD or LXD spectrum, will be the anchor 
+      spectrum.  
+
+   7. The non-anchor spectrum can be scaled to match the level of the anchor 
+      spectrum.  Type "s" (for "select"), and click with the left-most mouse 
+      button on the short and long wavelength boundaries of the region to be 
+      used to compute the relative scaling factor. When the user clicks on the 
+      "Auto Scale" button, Xmergexd will compute the best scale factor
+      for the non-anchor spectrum and re-plot the scaled spectrum. The computed
+      scale factor will be shown in the "Scale:" field. Alternatively, the
+      user can enter a number in this field and Xmergexd will scale the
+      non-anchor spectrum accordingly.
+
+   8. Sections of either the ShortXD or the LongXD can be cut
+      out before the two spectra are merged.  Type "g" (or click "Green" 
+      for the Trim Spectrum) to trim regions from the green spectrum.  
+      Then choose the direction of the cut by typing 'r' or 'l' (or click 
+      'Left' or 'Right' for the Trim Direction).  Clicking with the 
+      left-most mouse button removes the spectrum in the desired direction.
+      The blue spectrum can be trimed in a similar fashion by typing
+      'b' and the 'r' or 'l'.  To undo any cut, type "u".  To undo any 
+      cut, type "u".
+
+      A preview of what Xmergexd will produce for the combined spectrum 
+      can be seen by selecting the "Combine" button. Selecting the "Overlap" 
+      button will show the two separate spectra again.  Either spectrum can 
+      be temporarily removed from the plot by unchecking the "Blue" or 
+      "Green" buttons in the Xmergexd panel.
+
+   9. When the user is satisfied with the scaling and trimming of the 
+      the spectra, s/he should click on the "Merge Orders" button.
+      Xmergexd will then combine the spectra using a weighted average. 
+ 
+III. Write the Output File
+
+  10. When all orders have been merged, give the name of the output file 
+      in the "File Name" field and click on the "Write File" button. 

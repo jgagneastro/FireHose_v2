@@ -1,0 +1,23 @@
+Instructions :
+
+(1) Create a new IDL workspace and add all four directories :
+
+11-Misc_Collaborations (maybe not useful)
+21-FireHose
+22-SpanTool
+23-XIDL
+
+(2) Adapt the following lines in the firehose.pro file :
+
+setenv,'XIDL_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/xidl/'
+setenv,'IDLSPEC2D_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/idlspec2d/'
+setenv, 'IDLUTILS_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/idlutils/'
+setenv,'FIRE_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/21-FireHose/'
+
+(3) Adapt the following lines in the firehose_ld.pro file :
+
+idl_dir = gpath('idl')
+setenv,'XIDL_DIR='+idl_dir+'IDL_Library/23-XIDL/xidl/'
+setenv,'IDLSPEC2D_DIR='+idl_dir+'IDL_Library/23-XIDL/idlspec2d/'
+setenv, 'IDLUTILS_DIR='+idl_dir+'IDL_Library/23-XIDL/idlutils/'
+setenv,'FIRE_DIR='+idl_dir+'IDL_Library/21-FireHose/'

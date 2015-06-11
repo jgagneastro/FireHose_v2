@@ -1,0 +1,28 @@
+XLIGHTLOSS
+----------
+
+Xlightloss runs the program lightloss which corrects an input spectrum 
+for slit losses relative to the standard star used for flux calibration. 
+This program is useful if either the object or the standard were not 
+observed with the slit at the parallactic angle. 
+
+1) Load the telluric-corrected object spectrum (the output of xtellcor) 
+   and a standard star data file (e.g. the output produced by xcombspec) 
+   in the Obj and Std Spec fields, respectively.
+
+2) Give the wavelength at which the guiding was done is given in the Guide 
+   Wavelength field. For example, if the filter in the guide camera 
+   was contK, the guide wavelength is 2.26 microns. The seeing in
+   arcsec estimated at the guide wavelength is also required. 
+
+3) The output file name should be entered in the Output Name field. The 
+   user then clicks on the Correct Spectra button.
+
+Xlightloss will then read the headers of the two input files, determine 
+the position angle of the slits for the observations, the proper 
+parallactic angles, the differential atmospheric dispersion, and the 
+relative fractions of light contained within the slits.  The correction 
+to the object spectrum is then the relative fraction for the standard 
+divided by the relative fraction for the object. The object spectrum 
+is multiplied by the correction factor and output. A plot of both the 
+original object spectrum and the corrected spectrum is also shown.

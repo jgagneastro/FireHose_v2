@@ -1,0 +1,166 @@
+---Ximgtool----
+
+Ximgtool is resizable widget that can be used to view FITS images.
+It can also be used to view any two-dimensional array.  Please see the program 
+header to learn how to call ximgtool from the command line.
+
+
+----------------------------------------------------------------------------
+                                   Menu Bar
+----------------------------------------------------------------------------
+
+File:
+
+    Load FITS  :  The user can load a 2D FITS image into 1 of 4 buffers.
+    Divisors   :  Selecting this menu will change the menu bar to the 
+                  DIVISORS menu.  By selecting the On button, any *SUBSEQUENT* 
+                  FITS files loaded in a buffer will be divided by the values 
+                  of the FITS keyword listed in the field.  Click Done to 
+                  return to the menu bar.
+    Write TIFF :  Select to write the current displayed image to a TIFF image.
+    Write FITS :  Select to write the currently displayed image to a FITS file.
+    View Header:  Select to view the FITS header of the image in the current 
+                  buffer.
+    Quit       :  Select to quit ximgtool.
+
+View:
+
+    Range:  
+
+         This dropdown menu allows the user to change the range 
+         [Z Min, Z Max] of pixels values that can be distinguished on the 
+         display of the image in the current buffer.  That is the pixel values 
+         outside of the selected range will appear as if they had values 
+         equal to Z Min or Z Max.  
+
+
+         Manual Range:  Selecting this menu will change the menu bar to the 
+                        RANGE menu.  The user can then change the range 
+                        manually.  Click done to return to the main menu bar.
+         Full Range  :  The range becomes the minimum and maximum values.
+         Auto Range  :  A robust mean is computed for the image.  The range 
+                        is set to [mean-3*sig,mean+7*sig].
+         0-Max       :  The range becomes 0 and the maximum value in the image.
+
+    Scaling:
+
+         Linear :  The color distribution of the current image will be set
+                   to linear.
+
+         Log    :  The color distribution of the current image will be set 
+                   logarithmic.
+
+         Hist Eq:  The color distribution of the current image will be set
+                   based on a histogram equalization alogrithm.
+                   
+
+    Rotation:  The numbers correspond to the input of the IDL rotate command  
+
+         -Y to +Y (7)     :  Rotates the raw image around the X axis.
+
+         -X to +X (5)     :  Rotates the raw image around the Y axis.
+
+         -90 (1)          :  Rotates the raw image -90 degrees.
+
+         -180 (2)         :  Rotates the raw image -180 degrees.
+
+         -270 (3)         :  Rotates the raw image -270 degrees.
+
+	 Transpose +45 (4):  Transpose the raw image around the +45 line
+
+         Transpose -45 (6):  Transpose the raw image around the -45 line
+
+    Color:  
+
+         Grey   :  Selects the Grey color map
+
+         Heat   :  Selects the Heat color map
+         
+         Rainbow:  Selects the Rainbow color map
+
+	 Blue   :  Selects the Blue color map
+
+    Buffer     :  Used to switch buffers
+
+    Zoom Window:  Used to select the position of the zoom window
+
+    Image Math :  Select to do image math on the images loaded in the buffers.
+
+    Blinking   :  Select to choose which buffers to blink.  
+
+
+Cursor:
+
+    Zoom       :  Enters the zoom cursor mode, the default mode.  See the 
+                    cursor command 'z' for instructions.
+
+    Range Box  :  Enters the Range Box cursor mode.  See the cursor
+                    command 'r' for instructions.       
+
+    Moments Box:  Enters the Moments Box cursor mode.  See the cursor
+                    command 'm' for instructions.
+
+    Line Cut   :  Enters the Line Cut cursor mode.  See the cursor command 
+                  'l' for instructions.
+                    
+Zoom In:  Zooms in by a factor of 2.
+
+Zoom Out:  Zooms out by a factor of 2.
+
+Center:  Centers the current image in the window
+
+Invert:  Will invert the color map
+
+Help:  Launches the Ximgtool helpfile.    
+
+
+----------------------------------------------------------------------------
+                               Cursor Commands
+----------------------------------------------------------------------------
+
+up arrow    - Moves the cursor up 1 pixel
+
+down arrow  - Moves the cursor down 1 pixel
+
+left arrow  - Moves the cursor left 1 pixel
+
+right arrow - Moves the cursor right 1 pixel
+
+
+b           - To blink between the buffers selected in the Blink Menu 
+              (see above)
+
+c           - To reset the cursor mode to zoom mode.
+
+l           - To enter the line cut mode.  The user can create a line cut 
+              through the image by left-clicking the mouse, holding, and then 
+              moving the cursor.  When the button is released, a plot window 
+              will appear with the line cut.  Please type 'h' in the plot 
+              window for the xzoomplot help window.
+
+m           - To enter the moments mode.  The user can draw a box by 
+              left-clicking, holding, and moving the cursor.  When the button 
+              is released, a window will appear with the moments of the pixel 
+              values contained in the box.  The user can move the box by 
+              left-clicking INSIDE THE BOX, holding, and moving the cursor.  
+              When the user releases the button, a *NEW* window will appear 
+              with the moments of the pixels in the new box.  If the previous
+              moments window was not moved, the second window will appear OVER
+              the first.  To exit out of this mode, type 'c'.
+
+r           - To enter the range mode.  The user can draw a box by 
+              left-clicking, holding, and moving the cursor.  When the 
+              button is released, the range of the image is determined 
+              using only the pixels in the box as described above 
+              (View:Range).  The user can move the box by left-clicking 
+              INSIDE THE BOX, holding, and moving the cursor.  The image 
+              range will then be updated.  To compute the range using 
+              the entire image, type 'c' and then reselect the Range 
+              type from the menu bar (View:Range).  To exit out of this 
+              mode, type 'c'.
+
+z           - To enter the zoom mode, the default mode.  A single click with 
+              the left mouse button will center the image at that position.  
+              A double click with the left mouse button with zoom in by a 
+              factor of 2 and center the image at that position.
+

@@ -1,0 +1,77 @@
+XTELLCOR_BASIC
+--------------
+
+If the user wishes simply to divide an object spectrum by a standard
+star spectrum and then mutliply the result by a blackbody, s/he can use
+the program Xtellcor_basic.
+
+1. Type "xtellcor_basic" at the IDL prompt.
+
+I.  Loading the Data
+
+    2.  If the user is not working in the directory where the 
+        data is stored, enter the path either by clicking on 
+        the Path button or by typing the path into the field.
+        If the user is in the directory where the data is located, 
+        then this field can be left blank.  
+
+    3.  Enter the filename for the standard star spectrum in the "Std Spectra"
+        field, or choose a filename from the list that pops up when the 
+        "Std Spectra" button is clicked.
+
+    4.  Enter the filename for the object spectrum in the "Obj Spectra"
+        field, or choose a filename from the list that pops up when the 
+        "Obj Spectra" button is clicked.
+
+II.  Determining Residual Wavelength Shifts
+
+    5.  It is possible that there are slight wavelength shifts between 
+	the standard star used to construct the telluric spectrum and the 
+	the object to be corrected. These shifts need to be removed in 
+	order to avoid introducing spurious noise and artifacts when
+	dividing the object spectrum by the telluric spectrum. To estimate
+	the wavelength shifts and correct them, choose an order from the
+        pull-down menu "Order" in section 2 "Determine Shift" of the 
+        Xtellcor_basic control panel. Then click on the "Get Shift" button.
+
+        The Xfindshift panel will apear. The object spectrum and the 
+        telluric spectrum are both plotted in the upper window. The 
+	result of dividing one by the other is shown in the bottom window.
+
+    6.  Select a region containing a reasonably strong atmospheric features 
+        in both spectra. This is done by typing "s" (for "select") and 
+        click with the left-most mouse button on either side of the feature.
+        Then click on the "Auto Find" button. Xfindshift will shift the
+	telluric spectrum by fractions of a pixel and search for the 
+        best value, corresponding to a minimum in the RMS computed from 
+        the telluric corrected spectrum in the selected region. 
+
+        The wavelength shifts can be reset to zero by typing zero in the 
+        Shift field and hitting return.
+
+        If you wish to check the shift obtained from a different region,
+        type "s" and select a new wavelength region. To determine the 
+        shift estimated from other orders, click on the "Cancel" button, 
+        choose a new order from the Xtellcor_basic control panel, and repeat 
+        the procedure. 
+
+        When the user is satisfied with the shift found by Xfindshift,
+        s/he should click on the "Accept" button at the bottom of the panel.
+        This shift will be applied to ALL of the orders within a given 
+        aperture.
+
+III.  Restoring the Continuum Shape
+
+    7.  Select whether the absolute flux level of the object spectrum should 
+        be preserved with the "Yes" or "No" buttons. If "Yes" is chosen, 
+        the user must enter the V mag of the standard star and the blackbody 
+        temperature, and choose the units of the output spectrum from the 
+        pull-down menu.
+
+IV. Generate the Output Files
+
+    8. Give the name of the output file in the "Output File" field.
+
+    9. Click on the "Construct Spectra" button. 
+
+

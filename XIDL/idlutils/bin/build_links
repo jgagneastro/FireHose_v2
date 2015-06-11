@@ -1,0 +1,41 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# Build links from the directory $PATH1 to all subdirectories of $PATH2.
+# For example, if the directories /bar/one and /bar/two existed, then:
+#   build_links /foo /bar
+# would build the links from /foo/one -> /bar/one, and /foo/two -> /bar/two.
+#
+# Bugs:
+# -- We would link files in /bar are ignored, so only links to directories
+#    are actually built.
+# -- This script builds useless links if $PATH2 isn't a fully-qualified
+#    directory, i.e. "/u/schlegel/dirname", not "dirname".
+#
+# $Id: build_links 130264 2012-02-10 19:06:45Z weaver $
+#------------------------------------------------------------------------------
+#
+# Demand that both a source and destination directory are specified.
+#
+if [ $# != 2 ] ; then
+    echo "Need to specify a source and destination directory, i.e."
+    echo '  "build_links /foo /bar"'
+    exit 1
+fi
+path1=$1
+path2=$2
+if [ "${path1}" = "${path2}" ] ; then
+    echo "The source and destination directories cannot be the same!"
+    exit 1
+fi
+for dirname in $(/bin/ls -d ${path2}/*); do
+    if [ -d ${dirname} ]; then
+        shortname=$(basename ${dirname})
+        if [ -e "${path1}/${shortname}" ] ; then
+            echo "Removing old link for ${path1}/${shortname}"
+            /bin/rm ${path1}/${shortname}
+        fi
+        echo "Linking ${path1}/${shortname} -> ${path2}/${shortname}"
+        /bin/ln -s ${path2}/${shortname} ${path1}/${shortname}
+    fi
+done
+

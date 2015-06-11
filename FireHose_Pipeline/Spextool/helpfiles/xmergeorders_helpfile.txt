@@ -1,0 +1,124 @@
+XMERGEORDERS
+------------
+
+Xmergeorders allows the user to merge the various orders of
+reduced SpeX data into a single spectrum. 
+
+Xmergeorders is a fully resizing widget.
+
+Cursor commands:
+
+a - Sets the 'a'bsolute range to the current x and y range
+
+b - Enters the cutting mode for the blue spectrum.  
+
+c - Clear mouse mode.
+    Use to clear a zoom, fix, or remove session.
+
+i - To zoom IN in whatever zoom mode the cursor is currently
+    in.
+
+f - To toggle between having the blue and green spectrum in front
+
+g - Enters the cutting mode for the green spectrum.  
+
+l - Changes the cutting direction to 'Left'
+
+o - To zoom OUT in whatever zoom mode the cursor is currently
+    in.
+
+r - Changes the cutting direction to 'Right'
+
+u - To undo a cut created with either 'b' or 'g'
+
+w - To plot the entire spectrum
+
+x - Enters x zoom mode
+    Press and release left mouse button at lower x value and 
+    then at upper x value.
+
+y - Enters y zoom mode
+    Press and release left mouse button at lower y value and 
+    then at upper y value.
+
+z - Enters zoom mode
+    Press and release the left mouse button in one corner of the
+    zoom box and then move the cursor to the other corner and 
+    press and release the left mouse button.
+
+
+I. Starting Up
+
+   1. Type "xmergeorders" at the IDL prompt. This will bring up the 
+      Xmergeorders panel.
+
+   2. If the user is in the directory where the data is stored, skip to 
+      step 3.  If not, type in the directory path for the data, or click on 
+      the "Path" button and choose the path from the list shown.
+
+   3. Type in the file name of the data, or click on the "Input Spectrum"
+      button and choose the file from the list shown.
+
+   4. Select whether or not to allow errors to be propagated throughout 
+      the combining procedure.
+
+   5. Click on the "Load Spectrum" button to load the data file.
+
+   6. Choose an "Anchor Order" from the pull down menu. The Anchor order
+      is the order with which Xmergeorders will start. All other orders will
+      be added to this order (with appropriate scaling factors if desired).
+
+II. Adding Orders
+
+   7. After choosing an Anchor order, Xmergeorders will present a list of
+      of neighboring orders that can be merged with the anchor order. For
+      example, if the Anchor order is selected to be order 7, Xmergeorders
+      will allow the user to choose either order 6 or 8 to be merged with
+      order 7. Select the order to be added. The anchor order and the order 
+      to be added will both be plotted in the upper plot window next to the 
+      control panel for Xmergeorders. The anchor order will appear in blue, 
+      and the order to be added will appear in green. The S/N spectra will 
+      appear in the bottom window.
+
+   8. The added order can be scaled to match the level of the anchor order.
+      Type "s" (for "select"), and click with the left-most mouse button on 
+      the short and long wavelength boundaries of the region to be used to 
+      compute the relative scaling factor. When the user clicks on the 
+      "Auto Scale" button, Xmergeorder will compute the best scale factor
+      for the added order and re-plot the scaled spectrum. The computed
+      scale factor will be shown in the "Scale:" field. Alternatively, the
+      user can enter a number in this field and Xmergeorders will scale the
+      added order accordingly.  To reset the scale, type 1.0 in the 
+      scale field and hit return.  Note the 's' button will only
+      work if the two spectra overlap.  If there is no overlap, (e.g., Orders
+      3 and 4 of ShortXD) the user can still scale the added order by 
+      manually typing the scale factor in the Scale field.
+
+   9. Sections of either the anchor order or the added order can be cut
+      out before the two spectra are merged.  Type "g" (or click "Green" 
+      for the Trim Spectrum) to trim regions from the green spectrum.  
+      Then choose the direction of the cut by typing 'r' or 'l' (or click 
+      'Left' or 'Right' for the Trim Direction).  Clicking with the 
+      left-most mouse button removes the spectrum in the desired direction.
+      The blue spectrum can be trimed in a similar fashion by typing
+      'b' and the 'r' or 'l'.  To undo any cut, type "u".
+
+      A preview of what Xmergeorders will produce for any two plotted
+      spectra can be seen by selecting the "Combine" button. Selecting 
+      the "Overlap" button will show the two separate spectra again.
+      Either spectrum can be temporarily removed from the plot by unchecking
+      the "Blue" or "Green" buttons in the Xmergeorders panel.
+
+  10. When the user is satisfied with the scaling and trimming of the 
+      the spectra, s/he should click on the "Merge Orders" button.
+      Xmergeorders will then combine the spectra using a weighted average. 
+ 
+  11. Repeat steps 7-10 until all orders are merged.
+
+III. Write the Output File
+
+  12. When all orders have been merged, give the name of the output file 
+      in the "File Name" field and click on the "Write File" button. 
+
+
+

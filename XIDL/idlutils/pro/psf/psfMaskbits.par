@@ -1,0 +1,18 @@
+
+typedef struct {
+  char flag[20];  # Flag name
+  int bit;        # Bit number, 0-indexed (0 to 31)
+  char label[20]; # Bit label
+} maskbits;
+
+#------------------------------------------------------------------------------
+
+# maskbit 0 not used
+maskbits PSF 1 PSF_CENTER_NEAR_EDGE  # sub-pixel shifting took us near edge
+maskbits PSF 2 PSF_BAD_ZERO_LEVEL    # see psf_stamp_center_iter
+maskbits PSF 3 PSF_BIG_SHIFT         # sub-pixel shift was >1 pixel in x or y
+maskbits PSF 4 PSF_BAD_CHISQ         # chisq of PSF fit deemed bad
+maskbits PSF 5 PSF_NO_GOOD_PIX       # all pix masked by ivar
+maskbits PSF 6 PSF_CENTER_ZERO_IVAR  # region of zero ivar near center
+maskbits PSF 7 PSF_PEAK_NOCONVERGE   # psf_peak failed to converge
+maskbits PSF 8 PSF_SOME_ZERO_IVAR    # some zero ivar in PSF window

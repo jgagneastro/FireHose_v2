@@ -1,0 +1,2 @@
+cp ShortXD_arc_grat1.fits ShortXD_arc.fits
+cp ShortXD_wavecal_grat1.dat ShortXD_wavecal.dat

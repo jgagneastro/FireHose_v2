@@ -1,0 +1,51 @@
+INSTRUMENT=SpeX
+NCOLS=1024
+NROWS=1024
+FILENAME=IRAFNAME
+GAIN=13.0000
+READNOISE=50.0000
+ITIME=ITIME
+COADDS=CO_ADDS
+NDR=NDR
+SLOWCNT=SLOWCNT
+READTIME=TABLE_MS
+TIME=TIME_OBS
+POSANGLE=POSANGLE
+HA=HA
+AIRMASS=AIRMASS
+NINT=4
+BADPIXMASK=SpeX_bdpxmk.fits
+KEYWORDS=DIVISOR
+         ORIGIN
+         TELESCOP
+         INSTRUME
+         OBSERVER
+         OBJECT
+         IRAFNAME
+         BEAM
+         TIME_OBS
+         DATE_OBS
+         ITIME
+         CO_ADDS
+         NDR
+         SLOWCNT
+         GRSTCNT
+	 TABLE_MS
+         CALMIR
+         DIT
+         OSF
+         ROTATOR
+         POSANGLE
+         SLIT
+         GRAT
+         PLATE_SC
+         QTH_LAMP
+         INC_LAMP
+         IR_SRC
+         ARG_SRC
+         SHUTTER
+         RA
+         DEC
+         HA
+         AIRMASS
+         EPOCH

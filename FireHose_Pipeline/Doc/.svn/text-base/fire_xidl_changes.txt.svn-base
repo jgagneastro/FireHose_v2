@@ -1,0 +1,21 @@
+This is a list of changes the FIRE group has made to XIDL code:
+
+xidl/FIT/x_fitrej.pro:  Adjusted the inverse variance weighting
+	line 160:
+		changed from:
+                         upper=fitstr.hsig, $
+		to:
+                         invvar=fit/fit, upper=fitstr.hsig, $
+
+xidl/Spec/Longslit/pro/Bias/long_rdnoiseimg.pro: Added 'fire' as a telescope option
+
+To fix xidl memory leaks:
+
+in x_fndpeaks.pro, line 100:
+   if ptr_valid(fitstr.ffit) EQ 1 then ptr_free, fitstr.ffit
+
+in x_fit.pro, line 211:
+   if ptr_valid(fitstr.ffit) EQ 1 then ptr_free, fitstr.ffit
+   
+
+
