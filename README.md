@@ -5,7 +5,7 @@ Please note that I am not the original author of this reduction package, which w
 
 Erini Lambrides and the BDNYC group have helped me in this enterprise.
 https://github.com/elambrid
-
+ 
 The latest modifications to this pipeline were made with IDL 8.4. I tried to avoid using IDL 8-specific syntax, however it is possible that I forgot about some of them, which would cause error messages if used with IDL 7. Please contact me if this happens.
 
 Please refer to /FireHose/1-Firehose/Documentation/Firehose_Installation_Instructions.txt for instructions to properly set up Firehose on your maching.
