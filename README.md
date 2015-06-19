@@ -1,4 +1,11 @@
 # FireHose
+
+Please include this citation in the publications that make use of this code:
+Gagne, Lambrides, Faherty, Simcoe. Firehose v2.0. Zenodo. 10.5281/zenodo.18775
+
+You can find the Zenodo entry here
+https://zenodo.org/badge/doi/10.5281/zenodo.18775.svg
+
 A modified version of the Firehose IDL pipeline to reduce data obtained with the Folded-port InfraRed Echellette (FIRE) near-infrared spectrograph described here : http://web.mit.edu/~rsimcoe/www/FIRE/
 
 Please note that I am not the original author of this reduction package, which was created by Robert Simcoe. I have simply made several changes and fixed some glitches to make the pipeline easier to use.
