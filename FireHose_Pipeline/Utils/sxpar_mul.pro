@@ -1,10 +1,17 @@
-Function sxpar_mul, files, key, EXT=ext
+Function sxpar_mul, files, key, EXT=ext, IS_CORRUPTED=is_corrupted
   forward_function headfits, sxpar, create_nan, is_number
   !except=0
   nf = n_elements(files)
   type = -1
+  is_corrupted = lonarr(nf)
   for i=0L, nf-1L do begin
     hdr = headfits(files[i],/silent,EXT=ext)
+    
+    ;Check out for corrupted fits files
+    if n_elements(hdr) eq 1 and size(hdr,/type) eq 3L then begin
+      is_corrupted[i] = 1
+      continue
+    endif
     vi = sxpar(hdr,key,COUNT=count)
     if count eq 0L then continue
     if ~keyword_set(output) then begin

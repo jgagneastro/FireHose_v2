@@ -1609,8 +1609,27 @@ endif
 manlog = 'manual_log.txt'
 if ~file_test(rawdir+manlog) then begin
   ff = file_search(rawdir+'*.fits*')
+  
+  ;Get exposure times first and check for corrupted fits files at the same time
+  exptimes = sxpar_mul(ff,'EXPTIME',IS_CORRUPTED=is_corrupted)
+  
+  ;MOVE BAD FITS FILES TO CORRUPTED DIRECTORY
+  bad = where(is_corrupted, nbad)
+  if nbad ne 0L then begin
+    for bi=0L, nbad-1L do begin
+      message, ' Found a bad FITS file ! Moving "'+file_basename(ff[bad[bi]])+'" to corrupted subdir !', /CONTINUE
+      corrdir = file_dirname(ff[bad[bi]])+path_sep()+'corrupted'+path_sep()
+      if ~file_test(corrdir) then file_mkdir, corrdir
+      file_move, ff[bad[bi]], corrdir+file_basename(ff[bad[bi]]), /ALLOW_SAME
+    endfor
+    if n_elements(bad) eq n_elements(ff) then $
+      message, 'All FITS files were found to be corrupted ! (Maybe the wrong fits extension was used ?'
+    remove, bad, ff
+    exptimes = sxpar_mul(ff,'EXPTIME',IS_CORRUPTED=is_corrupted)
+  endif
+  
   if n_elements(ff) gt 1 or ff[0] ne '' then $
-    printuarr,rawdir+manlog,file_basename(ff),sxpar_mul(ff,'OBJECT'),sxpar_mul(ff,'GRISM'),strtrim(round(sxpar_mul(ff,'EXPTIME')),2),/jus,symbol=' | ',title=['File','Object','Grism','Texp(s)'],/new
+    printuarr,rawdir+manlog,file_basename(ff),sxpar_mul(ff,'OBJECT'),sxpar_mul(ff,'GRISM'),strtrim(round(exptimes),2),/jus,symbol=' | ',title=['File','Object','Grism','Texp(s)'],/new
 endif
 reduxpath = d0+'redux'+path_sep()
 folder_check, reduxpath
