@@ -519,11 +519,10 @@ PRO firehose_ld, path_in
 COMMON share, splitrow, splitrow_wid, arcmode, flatmode, objmode, extmode, clobber
 
   main = widget_base(/Col, Title='FIREHOSE Low-Dispersion', MBAR=bar)      ; main base
-  idl_dir = gpath('idl')
-  setenv,'XIDL_DIR='+idl_dir+'IDL_Library/23-XIDL/xidl/'
-  setenv,'IDLSPEC2D_DIR='+idl_dir+'IDL_Library/23-XIDL/idlspec2d/'
-  setenv, 'IDLUTILS_DIR='+idl_dir+'IDL_Library/23-XIDL/idlutils/'
-  setenv,'FIRE_DIR='+idl_dir+'IDL_Library/21-FireHose/'
+  setenv,'XIDL_DIR=/Users/gagne/Documents/IDL/IDL_Library/23-XIDL/xidl/'
+  setenv,'IDLSPEC2D_DIR=/Users/gagne/Documents/IDL/IDL_Library/23-XIDL/idlspec2d/'
+  setenv, 'IDLUTILS_DIR=/Users/gagne/Documents/IDL/IDL_Library/23-XIDL/idlutils/'
+  setenv,'FIRE_DIR=/Users/gagne/Documents/IDL/IDL_Library/21-FireHose/'
   
   ;; MENU BUTTONS
   
