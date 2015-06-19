@@ -20,3 +20,5 @@ IDLUTILS_DIR="/Users/gagne/Documents/IDL/IDL_library/FireHose/XIDL/idlutils/"
 FIRE_DIR="/Users/gagne/Documents/IDL/IDL_library/FireHose/FireHose_Pipeline/"
 
 You'll need to change these paths to your local paths pointing to these directories in the Firehose package. For Windows users, you can go into Firehose.pro around line ~1590, and un-comment the four calls to "setenv" in IDL. You will also need to update their paths accordingly. A similar operation is needed around line 522 of firehose_ld.pro
+
+Special thanks to Kelle Cruz for help in setting up the GitHub-Zenodo link.
