@@ -1588,10 +1588,11 @@ PRO firehose, dirname
 COMMON share;, firestrct, main;flatinter, traceinter, singlesinter, fire_pipe_inter, fire_pipe_clobber, fire_pipe_verbose, fire_pipe_bright, fire_mkstrct_verbose, fire_mkstrct_loud, xtell_clobber, xtell_quick, fire_pipe_plot
 
 ;** /Added by J. Gagne !@!@!@!
-setenv,'XIDL_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/xidl/'
-setenv,'IDLSPEC2D_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/idlspec2d/'
-setenv, 'IDLUTILS_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/23-XIDL/idlutils/'
-setenv,'FIRE_DIR=/Users/gagne/Dropbox/IDL/IDL_Library/21-FireHose/'
+;For lazy unix-mac users, and for Windows users that don't have a bash profile, use these lines :
+;setenv,'XIDL_DIR=/Users/gagne/Documents/IDL/IDL_library/FireHose/XIDL/xidl/'
+;setenv,'IDLSPEC2D_DIR=/Users/gagne/Documents/IDL/IDL_library/FireHose/XIDL/idlspec2d/'
+;setenv, 'IDLUTILS_DIR=/Users/gagne/Documents/IDL/IDL_library/FireHose/XIDL/idlutils/'
+;setenv,'FIRE_DIR=/Users/gagne/Documents/IDL/IDL_library/FireHose/FireHose_Pipeline/'
 ;d0 = '/Users/gagne/Dropbox/IDL/IDL_Library/21-FireHose/'+objname+'/'
 if ~keyword_set(dirname) then message, ' Please specify a data directory !'
 if ~file_test(dirname) then message, ' This data directory does not exist !'
