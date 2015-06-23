@@ -22,5 +22,4 @@ Pro string_replace, str, old, new
     stri += strmid(str[i],pos2[n_elements(pos2)-1])
     str[i] = stri
   endfor
-  print, str
 End

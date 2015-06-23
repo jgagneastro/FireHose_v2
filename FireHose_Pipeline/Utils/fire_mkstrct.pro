@@ -211,7 +211,7 @@ END
 ;    ARC			= ThAr or Ar arc lamp
 ;	  SKY			= Sky model frame (telescope pointing at blank sky frame)
 
-PRO FIRE_GUESS_EXPTYPE, data, LOUD=loud, VERBOSE=verbose, $
+PRO FIRE_GUESS_EXPTYPE, data,LOUD=loud, VERBOSE=verbose, $
                         INTERACTIVE=interactive, $
                         TELLCAT=tellcat, SCICAT=scicat, TELLNAMES=tellnames, $
                         SCINAMES=scinames, ORIGINAL=original, $
@@ -961,7 +961,7 @@ PRO FIRE_MATCH_FLATS, data, PIXFLATS=pixflats, ILLUMFLATS=illumflats, $
 
 	func_name = "fire_match_flats()"
 	if NOT keyword_set(LOUD) then loud = 0
-
+	print, "loud: ", loud
 	;; Cycle through the data and find the different flat regions
 	nfiles = n_elements(data)
 	region = intarr(nfiles, 1)
@@ -1007,6 +1007,7 @@ PRO FIRE_MATCH_FLATS, data, PIXFLATS=pixflats, ILLUMFLATS=illumflats, $
 
 	;; Determine the name of the order structure files from the names of the assigned
 	;; order files.  (Simply replace "Orders_" with "OStr_fire_"
+
 	for i=0, nfiles-1 do begin
 		tmp = strsplit(data[i].orderfile, "Orders_", /EXTRACT, /REGEX)
 		tmp1 = tmp[1]
@@ -1027,7 +1028,7 @@ PRO FIRE_MATCH_FLATS, data, PIXFLATS=pixflats, ILLUMFLATS=illumflats, $
 			data[i].ordr_str_file = " "
 		endelse
 	endfor
-
+		
 	;; Determine the name of the pixel image files from the names of the assigned
 	;; pixel flat files.  (Simply replace "Pixflat_" with "piximg_flats_"
 	for i=0, nfiles-1 do begin
@@ -1035,6 +1036,7 @@ PRO FIRE_MATCH_FLATS, data, PIXFLATS=pixflats, ILLUMFLATS=illumflats, $
 		tmp1 = tmp[1]
 		string_replace, tmp1, 'to', '_'
 		tmp[1] = tmp1
+
 		if n_elements(tmp) EQ 2 then begin
 			tmp = strjoin(tmp, "Pixflat_")
 			;tmp = strjoin(tmp, "piximg_flats_")
@@ -1067,7 +1069,7 @@ END
 ;; loud: prints much more information to screen (only recommended for debugging)
 
 PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
-                  LOUD=loud, INTERACTIVE=interactive, ORIGINAL=original, $
+				  LOUD=loud, INTERACTIVE=interactive, ORIGINAL=original, $
                   TELLNAMES=tellnames, SCINAMES=scinames, CATPATH=catpath, $
                   OBJCATS=objcats, TELLCATS=tellcats, PIXFLATS=pixflats, $
                   ILLUMFLATS=illumflats, OMASKS=omasks, OSTRS=ostrs, WIDGET=widget
@@ -1075,7 +1077,8 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
   
 	if NOT keyword_set(LOUD) then LOUD = 0
 	if NOT keyword_set(VERBOSE) then VERBOSE = 0
-
+	
+	print, "LOUD: ", loud
   ;; If not provided, prompt the user for the data path
   if NOT keyword_set( RAWPATH ) then begin
      path = DIALOG_PICKFILE(/DIRECTORY, title="Please select the data directory")
@@ -1145,14 +1148,14 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
   endfor
   
   ;; Set the exposure type using crude set of rules.
-  
+ 
   FIRE_GUESS_EXPTYPE, data, LOUD=loud, VERBOSE=verbose, INTERACTIVE=interactive, $
                       ORIGINAL=original, TELLNAMES=tellnames, $
                       SCINAMES=scinames, CATPATH=catpath, OBJCATS=objcats, TELLCATS=tellcats
   
   ;; Match certain objects with arcs
   FIRE_MATCH_ARCS, data, LOUD=loud, INTERACTIVE=interactive
-  
+ 
   ;; Match certain objects with tellurics
   FIRE_MATCH_TELLURICS, data, LOUD=loud, VERBOSE=verbose, INTERACTIVE=interactive
 
@@ -1160,7 +1163,7 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
   FIRE_MATCH_FLATS, data, PIXFLATS=PIXFLATS, ILLUMFLATS=illumflats, $
                     OMASKS=omasks, OSTRS=ostrs, LOUD=loud, $
                     VERBOSE=verbose, INTERACTIVE=interactive, WIDGET=widget
-  
+
   ;; Attach IDs to all science objects
   FIRE_ASSIGN_IDS, data, LOUD=loud, VERBOSE=verbose, INTERACTIVE=interactive
 
@@ -1191,6 +1194,7 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
 
   ;; Print the results to screen
   if LOUD EQ 1 then begin
+  	
                                 ; Print out a summary.
      for ifile=0, nfiles-1 do begin
         if (data[ifile].obj_id NE -1) then begin
