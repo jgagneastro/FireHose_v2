@@ -44,7 +44,7 @@
 ;     
 ; MODIFICATION HISTORY:
 ;     2001 - Written by M. Cushing, Institute for Astonomy, UH
-;-
+;-    2015 - More generic file path calls - Erini Lambrides
 ;
 ;******************************************************************************
 ;
@@ -1124,6 +1124,8 @@ getosinfo,dirsep,strsep
 ;last  = strpos(!path,'Spextool')
 ;first = strpos(!path,strsep,last,/REVERSE_SEARCH)
 ;packagepath = strmid(!path,first+1,last-first+8)
+packagepath = getenv('FIRE_DIR')+'Spextool/'
+
 packagepath = '/Users/gagne/Dropbox/IDL/IDL_Library/24-SpeXTool_FIRE/'
 
 ; Look to see if the output file already exists, if so then punt.
