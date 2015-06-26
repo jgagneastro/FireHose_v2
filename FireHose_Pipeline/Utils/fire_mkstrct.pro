@@ -1008,6 +1008,9 @@ PRO FIRE_MATCH_FLATS, data, PIXFLATS=pixflats, ILLUMFLATS=illumflats, $
 	;; Determine the name of the order structure files from the names of the assigned
 	;; order files.  (Simply replace "Orders_" with "OStr_fire_"
 
+	;;erini 06/25/15, there is a bug in here - mkstrct isn't ignoring the LD files (prism) and the error catches here, quick and dirty fix that i've been using is to take out the ld files from Raw directory;;
+
+
 	for i=0, nfiles-1 do begin
 		tmp = strsplit(data[i].orderfile, "Orders_", /EXTRACT, /REGEX)
 		tmp1 = tmp[1]
@@ -1110,7 +1113,9 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
      split = (strsplit(files[ifile],"/",/EXTRACT))
      data[ifile].fitsfile = split[n_elements(split)-1]
 
-     hdr = headfits(files[ifile], /SILENT)
+	;erini 6/25/15 removed keyword /silent, not allowed in headfits in Utils, i'm assuming you made
+	;modifed version of headfits that allows it, but there must be a bug in it
+     hdr = headfits(files[ifile])
      
      if size(hdr, /type) NE 7 then begin
         data[ifile].exptype = 'ERROR'
