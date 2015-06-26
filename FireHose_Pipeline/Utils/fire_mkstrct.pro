@@ -1113,8 +1113,6 @@ PRO FIRE_MKSTRCT, data, RAWPATH=rawpath, VERBOSE=verbose, $
      split = (strsplit(files[ifile],"/",/EXTRACT))
      data[ifile].fitsfile = split[n_elements(split)-1]
 
-	;erini 6/25/15 removed keyword /silent, not allowed in headfits in Utils, i'm assuming you made
-	;modifed version of headfits that allows it, but there must be a bug in it
      hdr = headfits(files[ifile])
      
      if size(hdr, /type) NE 7 then begin
